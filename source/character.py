@@ -17,7 +17,7 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             running = False
-        elif event.type == SDL_MOUSEBUTTONDOWN:
+        elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_RIGHT:
             movesheep = 0
             mouse_x, mouse_y = event.x, TUK_HEIGHT - 1 - event.y
             height = abs(mouse_y - hero.y)
@@ -26,8 +26,17 @@ def handle_events():
             _S = _R/2
             unit_y = height / _S
             unit_x = weight / _S
-            if mouse_y - hero.y < 0: unit_y *= -1
-            if mouse_x - hero.x < 0: unit_x *= -1
+            if mouse_y - hero.y < 0: 
+                unit_y *= -1
+            if mouse_x - hero.x < 0: 
+                hero.image = load_image('Unit3Motion_MoveCx1.png')
+                hero.image_x = 52
+                hero.image_y = 59
+                unit_x *= -1
+            if mouse_x - hero.x > 0: 
+                hero.image = load_image('Unit3Motion_MoveC1.png')
+                hero.image_x = 52
+                hero.image_y = 59
             # vector_x = mouse_x - hero.x
             # vector_y = mouse_y - hero.y
             # unit_x = vector_x / math.sqrt(math.pow(vector_x, 2) + math.pow(vector_y, 2))
@@ -42,6 +51,8 @@ class Hero:
         self.image = load_image('Unit3Motion_MoveAa1.png')
         self.x = 500
         self.y = 500
+        self.image_x = 39
+        self.image_y = 67
         self.frame = 0
 
 
@@ -53,10 +64,13 @@ class Hero:
             movesheep += unit_x
             if(abs(movesheep) > weight):
                 movesheep = 0
+                hero.image_x = 39
+                hero.image_y = 67
+                self.image = load_image('Unit3Motion_MoveAa1.png')
                 isMove = False
 
     def draw(self):
-        self.image.clip_draw(0, 0, 39, 67, self.x, self.y, 50, 80)
+        self.image.clip_draw(0, 0, self.image_x, self.image_y, self.x, self.y, 50, 80)
 
 
 
