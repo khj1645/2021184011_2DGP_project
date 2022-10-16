@@ -16,8 +16,8 @@ class normal_bullet:
         self.rect.ry = self.image_y / 2
         self.unit_x = 0
         self.unit_y = 0
+        self.rad = 0
         self.image = load_image('Bullet5_01.png')
-
     def update(self):
         self.rect.x += self.unit_x
         self.rect.y += self.unit_y
@@ -25,5 +25,6 @@ class normal_bullet:
             return True
         return False
     def draw(self):
-        self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, self.image_x, self.image_x)
+        self.image.rotate_draw(self.rad,self.rect.x,self.rect.y,43,24)
+        #self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, self.image_x, self.image_x)
         

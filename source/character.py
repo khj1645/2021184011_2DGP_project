@@ -2,8 +2,6 @@ from pico2d import *
 import rect
 import attack
 import math
-import os
-os.chdir('d:\\2021184011_2DGP_project\\Sprite_use')
 
 
 def setMove(event):
@@ -92,13 +90,7 @@ def setMove(event):
         hero.unit_y *= -1
     if mouse_x - hero.rect.x < 0:
         hero.unit_x *= -1
-    # if mouse_x - hero.rect.x < 0:
-    #     now_image = left_image
-    #     hero.image_x = 52
-    #     hero.image_y = 59
-    #     hero.rect.rx = hero.image_x / 2
-    #     hero.rect.ry = hero.image_y / 2
-    #     hero.rect.update()
+
 
     isMove = True
 def setNormalBullet(event):
@@ -114,6 +106,7 @@ def setNormalBullet(event):
         normal_bullet[len(normal_bullet) - 1].unit_y *= -1
     if mouse_x - normal_bullet[len(normal_bullet) - 1].rect.x < 0:
         normal_bullet[len(normal_bullet) - 1].unit_x *= -1
+    normal_bullet[len(normal_bullet) - 1].rad = math.atan2(mouse_y - normal_bullet[len(normal_bullet) - 1].rect.y, mouse_x - normal_bullet[len(normal_bullet) - 1].rect.x)
 
 def arrival():
     global hero, isMove, movesheep, weight, now_image
@@ -187,7 +180,7 @@ class Hero:
 
     def update(self):
         global movesheep
-        self.frame = (self.frame + 1) % 3
+        self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
         self.image = load_image(now_image[self.frame])
         if(isMove):
             self.rect.x += self.unit_x
@@ -196,7 +189,7 @@ class Hero:
             arrival()
         for a in normal_bullet[:]:
             if a.update():
-                normal_bullet.remove(a)
+                normal_bullet.remove(a) 
 
     def draw(self):
         self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
