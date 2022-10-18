@@ -16,8 +16,9 @@ class normal_bullet:
         self.rad = 0
         self.image = load_image('Bullet5_01.png')
     def update(self):
-        self.rect.x += self.unit_x
-        self.rect.y += self.unit_y
+        self.rect.x += self.unit_x - character.hero.unit_x
+        self.rect.y += self.unit_y - character.hero.unit_y
+        self.rect.update()
         if(self.rect.x > character.TUK_WIDTH or self.rect.x < 0 or self.rect.y > character.TUK_HEIGHT or self.rect.y < 0):
             return True
         return False
@@ -42,8 +43,11 @@ class skill_q:
         self.image_list = ['Bullet6_01.png','Bullet6_02.png','Bullet6_03.png']
         self.image = load_image(self.image_list[0])
     def update(self):
-        self.rect.x += self.unit_x
-        self.rect.y += self.unit_y
+        self.rect.x += self.unit_x - character.hero.unit_x
+        self.rect.y += self.unit_y - character.hero.unit_y
+        self.frame +=1
+        self.frame %=3
+        self.image = load_image(self.image_list[self.frame])
         self.rect.update()
         if(self.rect.x > character.TUK_WIDTH or self.rect.x < 0 or self.rect.y > character.TUK_HEIGHT or self.rect.y < 0):
             return True

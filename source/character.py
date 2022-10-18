@@ -1,5 +1,4 @@
-from re import X
-from tkinter import E
+
 from pico2d import *
 import rect
 import attack
@@ -13,7 +12,8 @@ def setMove(event):
     height = abs(mouse_y - hero.rect.y)
     weight = abs(mouse_x - hero.rect.x)
     _R = math.sqrt((height*height) + (weight*weight))
-    _S = _R/2
+    _S = _R/5
+    0
     hero.unit_y = height / _S
     hero.unit_x = weight / _S
     radian = math.atan2(mouse_y - hero.rect.y, mouse_x - hero.rect.x)
@@ -101,7 +101,7 @@ def setBullet(event, bullet):
     bheight = abs(mouse_y - bullet[len(bullet) - 1].rect.y)
     bweight = abs(mouse_x - bullet[len(bullet) - 1].rect.x)
     _R = math.sqrt((bheight*bheight) + (bweight*bweight))
-    _S = _R/5
+    _S = _R/10
     bullet[len(bullet) - 1].unit_y = bheight / _S
     bullet[len(bullet) - 1].unit_x = bweight / _S
     if mouse_y - bullet[len(bullet) - 1].rect.y < 0:
@@ -118,6 +118,7 @@ def arrival():
         hero.image_y = 67
         hero.rect.rx = hero.image_x / 2
         hero.rect.ry = hero.image_y / 2
+        hero.unit_x = hero.unit_y = 0
         hero.rect.update()
         now_image = idle_image
         isMove = False
@@ -193,8 +194,8 @@ class Hero:
         self.image_y = 67
         self.frame = 0
         self.movelen = 0
-        self.rect.x = 500
-        self.rect.y = 500
+        self.rect.x = 600
+        self.rect.y = 450
         self.rect.rx = self.image_x / 2
         self.rect.ry = self.image_y / 2
         self.unit_x = 0
@@ -207,8 +208,9 @@ class Hero:
         self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
         self.image = load_image(now_image[self.frame])
         if(isMove):
-            self.rect.x += self.unit_x
-            self.rect.y += self.unit_y
+            # self.rect.x += self.unit_x
+            # self.rect.y += self.unit_y
+            #pico2d.draw_rectangle(hero.rect.left,hero.rect.top, hero.rect.right, hero.rect.bottom )
             movesheep += self.unit_x
             self.rect.update()
             arrival()
@@ -222,9 +224,8 @@ class Hero:
     def draw(self):
         
         self.exp_image.clip_draw(0, 0, 465,48, TUK_WIDTH / 2, TUK_HEIGHT, TUK_WIDTH, 20)
-        self.hp_image.clip_draw(0, 0, 465,48, self.rect.x, self.rect.y + 50, 80, 10)
+        self.hp_image.clip_draw(0, 0, 465,48, self.rect.x, self.rect.y + 50, self.hp, 10)
         self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
-        #pico2d.draw_rectangle(self.rect.left,self.rect.bottom,self.rect.right,self.rect.top)
         for i in range(len(normal_bullet)):
             normal_bullet[i].draw()
         for i in range(len(skill_q)):
