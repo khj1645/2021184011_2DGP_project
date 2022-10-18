@@ -1,3 +1,5 @@
+from re import X
+from tkinter import E
 from pico2d import *
 import rect
 import attack
@@ -93,20 +95,20 @@ def setMove(event):
 
 
     isMove = True
-def setNormalBullet(event):
-    global mouse_x, mouse_y,  bheight, bweight, normal_bullet
+def setBullet(event, bullet):
+    global mouse_x, mouse_y,  bheight, bweight
     mouse_x, mouse_y = event.x, TUK_HEIGHT - 1 - event.y
-    bheight = abs(mouse_y - normal_bullet[len(normal_bullet) - 1].rect.y)
-    bweight = abs(mouse_x - normal_bullet[len(normal_bullet) - 1].rect.x)
+    bheight = abs(mouse_y - bullet[len(bullet) - 1].rect.y)
+    bweight = abs(mouse_x - bullet[len(bullet) - 1].rect.x)
     _R = math.sqrt((bheight*bheight) + (bweight*bweight))
     _S = _R/5
-    normal_bullet[len(normal_bullet) - 1].unit_y = bheight / _S
-    normal_bullet[len(normal_bullet) - 1].unit_x = bweight / _S
-    if mouse_y - normal_bullet[len(normal_bullet) - 1].rect.y < 0:
-        normal_bullet[len(normal_bullet) - 1].unit_y *= -1
-    if mouse_x - normal_bullet[len(normal_bullet) - 1].rect.x < 0:
-        normal_bullet[len(normal_bullet) - 1].unit_x *= -1
-    normal_bullet[len(normal_bullet) - 1].rad = math.atan2(mouse_y - normal_bullet[len(normal_bullet) - 1].rect.y, mouse_x - normal_bullet[len(normal_bullet) - 1].rect.x)
+    bullet[len(bullet) - 1].unit_y = bheight / _S
+    bullet[len(bullet) - 1].unit_x = bweight / _S
+    if mouse_y - bullet[len(bullet) - 1].rect.y < 0:
+        bullet[len(bullet) - 1].unit_y *= -1
+    if mouse_x - bullet[len(bullet) - 1].rect.x < 0:
+        bullet[len(bullet) - 1].unit_x *= -1
+    bullet[len(bullet) - 1].rad = math.atan2(mouse_y - bullet[len(bullet) - 1].rect.y, mouse_x - bullet[len(bullet) - 1].rect.x)
 
 def arrival():
     global hero, isMove, movesheep, weight, now_image
@@ -121,7 +123,7 @@ def arrival():
         isMove = False
 
 def enter():
-    global hero, running, left_image, right_image, idle_image 
+    global hero, running, left_image, right_image, idle_image, skill_q_coll_time
     global up_image, down_image, up_right_image, down_right_image,up_left_image, down_left_image, now_image
     hero = Hero()
     running = True
@@ -141,8 +143,10 @@ def enter():
 
     now_image = idle_image
 
+    skill_q_coll_time = 0
+
 def handle_events():
-    global running, click
+    global running, click, skill_q_coll_time
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -157,15 +161,34 @@ def handle_events():
             click = False
         elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             normal_bullet.append(attack.normal_bullet())
-            setNormalBullet(event)
+            setBullet(event, normal_bullet)
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
+        elif event.key == SDLK_q:
+            if(skill_q_coll_time <= 0):
+                skill_q_coll_time = 0.5
+                skill_q.append(attack.skill_q())
+                x, y = ctypes.c_int(0), ctypes.c_int(0)
+                buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
+                event.x = x.value
+                event.y = y.value
+                setBullet(event,skill_q)
 
+def update():
+    hero.update()
+
+def draw():
+    hero.draw()
 class Hero:
     
     def __init__(self):
         self.image = load_image('Unit3Motion_Nomal1.png')
+        self.hp_image = load_image('Sheet_UIBar03.png')
+        self.exp_image = load_image('Sheet_ManaBar_Normal.png')
         self.rect = rect.rect()
+        self.exp = 0
+        self.lv = 1
+        self.hp = 100
         self.image_x = 31
         self.image_y = 67
         self.frame = 0
@@ -179,26 +202,38 @@ class Hero:
         self.rect.update()
 
     def update(self):
-        global movesheep
+        global movesheep, skill_q_coll_time
+        skill_q_coll_time -= 0.016
         self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
         self.image = load_image(now_image[self.frame])
         if(isMove):
             self.rect.x += self.unit_x
             self.rect.y += self.unit_y
             movesheep += self.unit_x
+            self.rect.update()
             arrival()
         for a in normal_bullet[:]:
             if a.update():
                 normal_bullet.remove(a) 
+        for a in skill_q[:]:
+            if a.update():
+                skill_q.remove(a) 
 
     def draw(self):
+        
+        self.exp_image.clip_draw(0, 0, 465,48, TUK_WIDTH / 2, TUK_HEIGHT, TUK_WIDTH, 20)
+        self.hp_image.clip_draw(0, 0, 465,48, self.rect.x, self.rect.y + 50, 80, 10)
         self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
+        #pico2d.draw_rectangle(self.rect.left,self.rect.bottom,self.rect.right,self.rect.top)
         for i in range(len(normal_bullet)):
             normal_bullet[i].draw()
+        for i in range(len(skill_q)):
+            skill_q[i].draw()
 
 
 normal_bullet = []
-
+skill_q= []
+skill_q_coll_time = None
 hero = None
 running = False
 click = False
