@@ -98,18 +98,19 @@ def setMove(event):
 def setBullet(event, bullet):
     global mouse_x, mouse_y,  bheight, bweight
     mouse_x, mouse_y = event.x, TUK_HEIGHT - 1 - event.y
-    bheight = abs(mouse_y - bullet[len(bullet) - 1].rect.y)
-    bweight = abs(mouse_x - bullet[len(bullet) - 1].rect.x)
+    bheight = abs(mouse_y - bullet[len(bullet) - 1].circle.y)
+    bweight = abs(mouse_x - bullet[len(bullet) - 1].circle.x)
     _R = math.sqrt((bheight*bheight) + (bweight*bweight))
     _S = _R/10
     bullet[len(bullet) - 1].unit_y = bheight / _S
     bullet[len(bullet) - 1].unit_x = bweight / _S
-    if mouse_y - bullet[len(bullet) - 1].rect.y < 0:
+    if mouse_y - bullet[len(bullet) - 1].circle.y < 0:
         bullet[len(bullet) - 1].unit_y *= -1
-    if mouse_x - bullet[len(bullet) - 1].rect.x < 0:
+    if mouse_x - bullet[len(bullet) - 1].circle.x < 0:
         bullet[len(bullet) - 1].unit_x *= -1
-    bullet[len(bullet) - 1].rad = math.atan2(mouse_y - bullet[len(bullet) - 1].rect.y, mouse_x - bullet[len(bullet) - 1].rect.x)
+    bullet[len(bullet) - 1].rad = math.atan2(mouse_y - bullet[len(bullet) - 1].circle.y, mouse_x - bullet[len(bullet) - 1].circle.x)
 
+    
 def arrival():
     global hero, isMove, movesheep, weight, now_image
     if(abs(movesheep) > weight):
