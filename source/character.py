@@ -22,71 +22,71 @@ def setMove(event):
         now_image = right_image
         hero.image_x = 52
         hero.image_y = 59
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     elif degree < 67.5:
         now_image = up_right_image
         hero.image_x = 40
         hero.image_y = 67
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     elif degree < 112.5:# and degree > -300:
         now_image = up_image
         hero.image_x = 38
         hero.image_y = 66
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     elif degree < 157.5:# and degree > -240:
         now_image = up_left_image
         hero.image_x = 39
         hero.image_y = 67
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     elif degree < 180 and degree > -210:
         now_image = left_image
         hero.image_x = 52
         hero.image_y = 59
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     if degree > -180 and degree < -157.5:
         now_image = left_image
         hero.image_x = 52
         hero.image_y = 59
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     elif degree < -112.5 and degree > -157.5:
         now_image = down_left_image
         hero.image_x = 44
         hero.image_y = 63
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     elif degree < -67.5 and degree > -112.5:
         now_image = down_image
         hero.image_x = 39
         hero.image_y = 67
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     elif degree < -22.5 and degree > -67.5:
         now_image = down_right_image
         hero.image_x = 39
         hero.image_y = 67
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     elif degree < 0 and degree > -22.5:
         now_image = right_image
         hero.image_x = 52
         hero.image_y = 59
-        hero.rect.rx = hero.image_x / 2
-        hero.rect.ry = hero.image_y / 2
+        # hero.rect.rx = hero.image_x / 2
+        # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
     if mouse_y - hero.rect.y < 0:
         hero.unit_y *= -1
@@ -125,7 +125,7 @@ def arrival():
         isMove = False
 
 def enter():
-    global hero, running, left_image, right_image, idle_image, skill_q_coll_time
+    global hero, running, left_image, right_image, idle_image, skill_q_coll_time, skill_e, skill_w, skill_w_coll_time
     global up_image, down_image, up_right_image, down_right_image,up_left_image, down_left_image, now_image
     hero = Hero()
     running = True
@@ -146,9 +146,13 @@ def enter():
     now_image = idle_image
 
     skill_q_coll_time = 0
+    skill_e = attack.skill_e()
+
+    skill_w_coll_time = 0
+    skill_w = []
 
 def handle_events():
-    global running, click, skill_q_coll_time
+    global running, click, skill_q_coll_time, skill_w, skill_w_coll_time
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -175,6 +179,14 @@ def handle_events():
                 event.x = x.value
                 event.y = y.value
                 setBullet(event,skill_q)
+        elif event.key == SDLK_w:
+            if(skill_w_coll_time <= 0):
+                skill_w_coll_time = 0.5
+                skill_w.append(attack.skill_w())
+                x, y = ctypes.c_int(0), ctypes.c_int(0)
+                buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
+                event.x = x.value
+                skill_w[len(skill_w) - 1].rect[0].x = event.x
 
 def update():
     hero.update()
@@ -204,8 +216,9 @@ class Hero:
         self.rect.update()
 
     def update(self):
-        global movesheep, skill_q_coll_time
+        global movesheep, skill_q_coll_time, skill_w_coll_time
         skill_q_coll_time -= 0.016
+        skill_w_coll_time -= 0.016
         self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
         self.image = load_image(now_image[self.frame])
         if(isMove):
@@ -221,21 +234,31 @@ class Hero:
         for a in skill_q[:]:
             if a.update():
                 skill_q.remove(a) 
+        for a in skill_w[:]:
+            if a.update():
+                skill_w.remove(a)
+        skill_e.update()
 
     def draw(self):
         
         self.exp_image.clip_draw(0, 0, 465,48, TUK_WIDTH / 2, TUK_HEIGHT, TUK_WIDTH, 20)
         self.hp_image.clip_draw(0, 0, 465,48, self.rect.x, self.rect.y + 50, self.hp, 10)
-        self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
         for i in range(len(normal_bullet)):
             normal_bullet[i].draw()
         for i in range(len(skill_q)):
             skill_q[i].draw()
+        for i in range(len(skill_w)):
+            skill_w[i].draw()
+        skill_e.draw()
+        self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
 
 
 normal_bullet = []
 skill_q= []
+skill_w= []
 skill_q_coll_time = None
+skill_w_coll_time = None
+skill_e = None
 hero = None
 running = False
 click = False
