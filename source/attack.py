@@ -94,16 +94,24 @@ class skill_w:
             self.rect[i].y = character.hero.rect.y
         self.frame = -1
         self.image_list = ['ThunderA0.png','ThunderA1.png','ThunderA2.png']
+        self.effect_list = ['Explosion7_01.png','Explosion7_02.png','Explosion7_03.png','Explosion7_04.png','Explosion7_05.png','Explosion7_06.png']
         self.image = load_image(self.image_list[0])
+        self.effect = load_image(self.effect_list[0])
     def update(self):
         if self.frame >= 6:
             return True
-        for i in range(3):
-            self.rect[i].update()
         self.frame += 1
         self.image = load_image(self.image_list[self.frame % 3])
+        self.effect = load_image(self.effect_list[self.frame % 6])
+        for i in range(3):
+            self.rect[i].x += (-1) ** self.frame * (20)
+        for i in range(3):
+            self.rect[i].update()
+            if(self.rect[i].collide_rect(character.hero.rect)):
+                break
         return False
     def draw(self):
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
         for i in range(3):
             self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect[i].x, self.rect[i].y, 40, 900)
+            self.effect.clip_draw(0, 0, 181, 175, self.rect[i].x, 25, 100, 100)

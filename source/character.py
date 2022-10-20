@@ -238,6 +238,7 @@ class Hero:
             if a.update():
                 skill_w.remove(a)
         skill_e.update()
+        hero.rect.update()
 
     def draw(self):
         
