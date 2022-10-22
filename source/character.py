@@ -125,7 +125,7 @@ def arrival():
         isMove = False
 
 def enter():
-    global hero, running, left_image, right_image, idle_image, skill_q_coll_time, skill_e, skill_w, skill_w_coll_time
+    global hero, running, left_image, right_image, idle_image, skill_q_coll_time, skill_e, skill_w, skill_w_coll_time, skill_r, skill_r_cooltime
     global up_image, down_image, up_right_image, down_right_image,up_left_image, down_left_image, now_image
     hero = Hero()
     running = True
@@ -149,10 +149,12 @@ def enter():
     skill_e = attack.skill_e()
 
     skill_w_coll_time = 0
+    skill_r_cooltime = 0
+    skill_r = attack.skill_r()
     skill_w = []
 
 def handle_events():
-    global running, click, skill_q_coll_time, skill_w, skill_w_coll_time
+    global running, click, skill_q_coll_time, skill_w, skill_w_coll_time, skill_r_cooltime, skill_r
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -187,6 +189,18 @@ def handle_events():
                 buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
                 event.x = x.value
                 skill_w[len(skill_w) - 1].rect[0].x = event.x
+
+        elif event.key == SDLK_r:
+            if(skill_r_cooltime <= 0):
+                #skill_r_cooltime = 3
+                x, y = ctypes.c_int(0), ctypes.c_int(0)
+                buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
+                event.x = x.value
+                event.y = y.value
+                skill_r.move_rate_y = TUK_HEIGHT - 1 - event.y
+                skill_r.circle.x = x.value
+                skill_r.circle.y = 1350
+                skill_r.isuse = True
 
 def update():
     hero.update()
@@ -237,6 +251,8 @@ class Hero:
         for a in skill_w[:]:
             if a.update():
                 skill_w.remove(a)
+        if skill_r.isuse:
+            skill_r.update()
         skill_e.update()
         hero.rect.update()
 
@@ -251,14 +267,20 @@ class Hero:
         for i in range(len(skill_w)):
             skill_w[i].draw()
         skill_e.draw()
+        if skill_r.isuse:
+            skill_r.draw()
+            if skill_r.move_rate_y >= skill_r.circle.y:
+                skill_r.isuse = False
         self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
 
 
 normal_bullet = []
 skill_q= []
 skill_w= []
+skill_r = None
 skill_q_coll_time = None
 skill_w_coll_time = None
+skill_r_cooltime = None
 skill_e = None
 hero = None
 running = False

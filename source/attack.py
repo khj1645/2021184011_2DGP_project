@@ -115,3 +115,29 @@ class skill_w:
         for i in range(3):
             self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect[i].x, self.rect[i].y, 40, 900)
             self.effect.clip_draw(0, 0, 181, 175, self.rect[i].x, 25, 100, 100)
+
+class skill_r:
+    def __init__(self):
+        self.isuse = False
+        self.move_rate_y = 0
+        self.move_rate_x = 0
+        self.image_x = 330
+        self.image_y = 330
+        self.circle = circle.circle()
+        self.circle.x = 0
+        self.circle.y = 0
+        self.circle.r = 150
+        self.frame = -1
+        self.image_list = ['MeteorC1.png','MeteorC2.png']
+        self.image = load_image(self.image_list[0])
+    def update(self):
+        self.circle.update()
+        self.frame +=1
+        self.frame %=2
+        self.circle.y -= 10
+        self.circle.x += 1
+        self.image = load_image(self.image_list[self.frame])
+       
+    def draw(self):
+        #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
+        self.image.clip_draw(0, 0, self.image_x, self.image_y, self.circle.x, self.circle.y, self.circle.r * 2, self.circle.r * 2)
