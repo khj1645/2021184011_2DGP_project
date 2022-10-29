@@ -1,13 +1,13 @@
 from pico2d import *
 import character
 import background
+import enemy
 import os
 
 ix = 600
 iy = 450
 os.chdir('d:\\2021184011_2DGP_project\\Sprite_use')
-state = character
-open_canvas(state.TUK_WIDTH, state.TUK_HEIGHT)
+open_canvas(character.TUK_WIDTH, character.TUK_HEIGHT)
 background.enter()
 running = None
 
@@ -21,13 +21,16 @@ def enter():
     running = True
     character.enter()
     background.enter()
+    enemy.enter()
 
 def draw():
     background.update()
     character.draw()
+    enemy.draw()
 
 def update():
     character.update()
+    enemy.update()
 
 enter()
 while(running):
