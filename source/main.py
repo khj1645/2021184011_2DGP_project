@@ -7,16 +7,33 @@ ix = 600
 iy = 450
 os.chdir('d:\\2021184011_2DGP_project\\Sprite_use')
 state = character
-state.open_canvas(state.TUK_WIDTH, state.TUK_HEIGHT)
+open_canvas(state.TUK_WIDTH, state.TUK_HEIGHT)
 background.enter()
+running = None
+
+def handle_events():
+    global running
+    character.handle_events()
 
 
-state.enter()
-while(state.running):
-    state.handle_events()
-    clear_canvas()
+def enter():
+    global running
+    running = True
+    character.enter()
+    background.enter()
+
+def draw():
     background.update()
-    state.update()
-    state.draw()
+    character.draw()
+
+def update():
+    character.update()
+
+enter()
+while(running):
+    handle_events()
+    clear_canvas()
+    draw()
+    update()
     update_canvas()  
     delay(0.016)
