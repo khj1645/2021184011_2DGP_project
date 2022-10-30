@@ -14,8 +14,14 @@ class enemy:
         self.circle.r = 60
     
     def update(self):
-        self.circle.x -= character.hero.unit_x
-        self.circle.y -= character.hero.unit_y
+        if(self.circle.x < character.hero.rect.x):
+            self.circle.x += 3 - character.hero.unit_x
+        if(self.circle.x > character.hero.rect.x):
+            self.circle.x += -3 - character.hero.unit_x
+        if(self.circle.y < character.hero.rect.y):
+            self.circle.y += 3 - character.hero.unit_y
+        if(self.circle.y > character.hero.rect.y):
+            self.circle.y += -3 - character.hero.unit_y
     
     def draw(self):
         self.image.clip_draw(0, 0, 110, 120, self.circle.x, self.circle.y, 120, 120)
