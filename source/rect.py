@@ -14,7 +14,7 @@ class rect:
         self.right = self.x + self.rx
         self.bottom = self.y - self.ry
         self.top = self.y + self.ry
-        #pico2d.draw_rectangle( self.left,self.top,self.right, self.bottom)
+        pico2d.draw_rectangle( self.left,self.top,self.right, self.bottom)
 
     def collide_rect(self,rect):
         return (self.left <= rect.right and

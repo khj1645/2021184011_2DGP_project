@@ -153,26 +153,22 @@ def enter():
     skill_r = attack.skill_r()
     skill_w = []
 
-def handle_events():
+def handle_events(event):
     global running, click, skill_q_coll_time, skill_w, skill_w_coll_time, skill_r_cooltime, skill_r
-    events = get_events()
-    for event in events:
-        if event.type == SDL_QUIT:
+    if event.type == SDL_QUIT:
             running = False
-        elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_RIGHT:
+    elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_RIGHT:
             click = True
             setMove(event)
-        elif event.type == SDL_MOUSEMOTION and click == True:
+    elif event.type == SDL_MOUSEMOTION and click == True:
             if(click):
                 setMove(event)
-        elif event.type == SDL_MOUSEBUTTONUP and event.button == SDL_BUTTON_RIGHT:
+    elif event.type == SDL_MOUSEBUTTONUP and event.button == SDL_BUTTON_RIGHT:
             click = False
-        elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+    elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             normal_bullet.append(attack.normal_bullet())
             setBullet(event, normal_bullet)
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            running = False
-        elif event.key == SDLK_q:
+    elif event.key == SDLK_q:
             if(skill_q_coll_time <= 0):
                 skill_q_coll_time = 0.5
                 skill_q.append(attack.skill_q())
@@ -181,7 +177,7 @@ def handle_events():
                 event.x = x.value
                 event.y = y.value
                 setBullet(event,skill_q)
-        elif event.key == SDLK_w:
+    elif event.key == SDLK_w:
             if(skill_w_coll_time <= 0):
                 skill_w_coll_time = 0.5
                 skill_w.append(attack.skill_w())
@@ -190,7 +186,7 @@ def handle_events():
                 event.x = x.value
                 skill_w[len(skill_w) - 1].rect[0].x = event.x
 
-        elif event.key == SDLK_r:
+    elif event.key == SDLK_r:
             if(skill_r_cooltime <= 0):
                 #skill_r_cooltime = 3
                 x, y = ctypes.c_int(0), ctypes.c_int(0)
