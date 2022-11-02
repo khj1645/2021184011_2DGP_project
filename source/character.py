@@ -1,4 +1,3 @@
-
 from pico2d import *
 import rect
 import attack

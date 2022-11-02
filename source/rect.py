@@ -14,10 +14,29 @@ class rect:
         self.right = self.x + self.rx
         self.bottom = self.y - self.ry
         self.top = self.y + self.ry
-        pico2d.draw_rectangle( self.left,self.top,self.right, self.bottom)
+        # pico2d.draw_rectangle( self.left,self.top,self.right, self.bottom)
 
-    def collide_rect(self,rect):
+    def collide_rect_to_rect(self,rect):
         return (self.left <= rect.right and
                 self.right >= rect.left and
                 self.top >= rect.bottom and
                 self.bottom <= rect.top)
+
+    def collide_rect_to_circle(self,circle):
+        temp = rect()
+        temp.left = self.left - circle.r
+        temp.right = self.right + circle.r
+        temp.bottom = self.bottom - circle.r
+        temp.top = self.top + circle.r
+        if circle.x < temp.right and circle.x > temp.left and circle.y > temp.bottom and circle.y < temp.top:
+            return True
+        if math.sqrt(((circle.x - self.left) ** 2) + ((circle.y - self.bottom) ** 2)) <= circle.r:
+            return True
+        if math.sqrt(((circle.x - self.left) ** 2) + ((circle.y - self.top) ** 2)) <= circle.r:
+            return True
+        if math.sqrt(((circle.x - self.right) ** 2) + ((circle.y - self.bottom) ** 2)) <= circle.r:
+            return True
+        if math.sqrt(((circle.x - self.right) ** 2) + ((circle.y - self.top) ** 2)) <= circle.r:
+            return True
+        
+        return False

@@ -3,7 +3,7 @@ from pico2d import *
 import character
 import rect
 import circle
-
+import enemy
 class normal_bullet:
     image = None
     def __init__(self):
@@ -27,6 +27,10 @@ class normal_bullet:
        # self.rect.update()
         if(self.circle.x > character.TUK_WIDTH or self.circle.x < 0 or self.circle.y > character.TUK_HEIGHT or self.circle.y < 0):
             return True
+        for ene in enemy.enemys:
+            if(self.circle.collide_circle_to_circle(ene.circle)):
+                ene.hp -=5
+                return True
         return False
     def draw(self):
         self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,43,24)
@@ -59,6 +63,10 @@ class skill_q:
         self.image = load_image(self.image_list[self.frame])
         if(self.circle.x > character.TUK_WIDTH or self.circle.x < 0 or self.circle.y > character.TUK_HEIGHT or self.circle.y < 0):
             return True
+        for ene in enemy.enemys:
+            if(self.circle.collide_circle_to_circle(ene.circle)):
+                ene.hp -=50
+                return True
         return False
     def draw(self):
         self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,80,64)
@@ -82,6 +90,9 @@ class skill_e:
         self.frame +=1
         self.frame %=3
         self.image = load_image(self.image_list[self.frame])
+        for ene in enemy.enemys:
+            if self.circle.collide_circle_to_circle(ene.circle):
+                ene.hp -= 0.5
        
     def draw(self):
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
@@ -99,6 +110,8 @@ class skill_w:
             self.rect[i].rx = 20
             self.rect[i].ry = 450
             self.rect[i].y = character.hero.rect.y
+        self.rect[1].x = 9999 # todo : 업그레이드에 따라 번개 갈래 수 증가
+        self.rect[2].x = 9999 
         self.frame = -1
         if skill_w.image == None:
             self.image_list = ['ThunderA0.png','ThunderA1.png','ThunderA2.png']
@@ -108,15 +121,17 @@ class skill_w:
     def update(self):
         if self.frame >= 6:
             return True
+        if self.frame == 0:
+            for ene in enemy.enemys:
+                for i in range(3):
+                    if self.rect[i].collide_rect_to_circle(ene.circle):
+                        ene.hp -=30
         self.frame += 1
         self.image = load_image(self.image_list[self.frame % 3])
         self.effect = load_image(self.effect_list[self.frame % 6])
         for i in range(3):
             self.rect[i].x += (-1) ** self.frame * (20)
-        for i in range(3):
             self.rect[i].update()
-            if(self.rect[i].collide_rect(character.hero.rect)):
-                break
         return False
     def draw(self):
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
