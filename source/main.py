@@ -7,7 +7,7 @@ import os
 ix = 600
 iy = 450
 os.chdir('d:\\2021184011_2DGP_project\\Sprite_use')
-open_canvas(character.TUK_WIDTH, character.TUK_HEIGHT - 150)
+open_canvas(character.TUK_WIDTH, character.TUK_HEIGHT)
 background.enter()
 running = None
 
