@@ -2,7 +2,10 @@ from pico2d import *
 import rect
 import attack
 import math
-
+import lobby
+import game_framework
+import enemy
+import item
 
 def setMove(event):
     global mouse_x, mouse_y, isMove, hero,  height, weight, movesheep, now_image
@@ -125,7 +128,7 @@ def arrival():
 
 def enter():
     global hero, running, left_image, right_image, idle_image, skill_q_coll_time, skill_e, skill_w, skill_w_coll_time, skill_r, skill_r_cooltime
-    global up_image, down_image, up_right_image, down_right_image,up_left_image, down_left_image, now_image
+    global up_image, down_image, up_right_image, down_right_image,up_left_image, down_left_image, now_image, hit_time, die_image
     hero = Hero()
     running = True
     right_image = ['Unit3Motion_MoveC1.png','Unit3Motion_MoveC2.png','Unit3Motion_MoveC3.png']
@@ -142,6 +145,8 @@ def enter():
 
     idle_image = ['Unit3Motion_Nomal1.png','Unit3Motion_Nomal2.png', 'Unit3Motion_Nomal1.png']
 
+    die_image =  ['Unit3Motion_DeathA1.png','Unit3Motion_DeathB1.png','Unit3Motion_DeathC1.png','Unit3Motion_DeathD1.png']
+    
     now_image = idle_image
 
     skill_q_coll_time = 0
@@ -151,6 +156,7 @@ def enter():
     skill_r_cooltime = 0
     skill_r = attack.skill_r()
     skill_w = []
+    hit_time = 0
 
 def handle_events(event):
     global running, click, skill_q_coll_time, skill_w, skill_w_coll_time, skill_r_cooltime, skill_r
@@ -198,7 +204,17 @@ def handle_events(event):
                 skill_r.isuse = True
 
 def update():
-    hero.update()
+    global hit_time, now_image, die_image
+    if hit_time > 0:
+        hit_time -= 0.016
+    if hero.hp <=0 and hero.die == False:
+        hero.die = True
+        hero.image_x = 40
+        hero.image_y = 70
+        hero.frame = 0
+        now_image = die_image
+    if hero.update():
+        game_framework.change_state(lobby)
 
 def draw():
     hero.draw()
@@ -222,39 +238,53 @@ class Hero:
         self.rect.ry = self.image_y / 2
         self.unit_x = 0
         self.unit_y = 0
+        self.die = False
         self.rect.update()
 
     def update(self):
-        global movesheep, skill_q_coll_time, skill_w_coll_time
-        skill_q_coll_time -= 0.016
-        skill_w_coll_time -= 0.016
-        self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
-        self.image = load_image(now_image[self.frame])
-        if(isMove):
-            # self.rect.x += self.unit_x
-            # self.rect.y += self.unit_y
-            #pico2d.draw_rectangle(hero.rect.left,hero.rect.top, hero.rect.right, hero.rect.bottom )
-            movesheep += self.unit_x
+        global movesheep, skill_q_coll_time, skill_w_coll_time, hit_time
+        if hero.die:
+            if self.frame >= 4:
+                return True
+            self.image = load_image(now_image[self.frame % 4])
+            self.frame = self.frame + 1
+        else:
+            skill_q_coll_time -= 0.016
+            skill_w_coll_time -= 0.016
+            self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
+            self.image = load_image(now_image[self.frame])
+            if(isMove):
+                # self.rect.x += self.unit_x
+                # self.rect.y += self.unit_y
+                #pico2d.draw_rectangle(hero.rect.left,hero.rect.top, hero.rect.right, hero.rect.bottom )
+                movesheep += self.unit_x
+                self.rect.update()
+                arrival()
+            for a in normal_bullet[:]:
+                if a.update():
+                    normal_bullet.remove(a) 
+            for a in skill_q[:]:
+                if a.update():
+                    skill_q.remove(a) 
+            for a in skill_w[:]:
+                if a.update():
+                    skill_w.remove(a)
+            for ene in enemy.enemys:
+                if hit_time <= 0:
+                    if hero.rect.collide_rect_to_circle(ene.circle):
+                        self.hp -= 40
+                        hit_time = 0.5
+            for it in item.items[:]:
+                    if self.rect.collide_rect_to_rect(it.rect):
+                        self.hp += 20
+                        item.items.remove(it)
+            if skill_r.isuse:
+                skill_r.update()
+            skill_e.update()
             self.rect.update()
-            arrival()
-        for a in normal_bullet[:]:
-            if a.update():
-                normal_bullet.remove(a) 
-        for a in skill_q[:]:
-            if a.update():
-                skill_q.remove(a) 
-        for a in skill_w[:]:
-            if a.update():
-                skill_w.remove(a)
-        if skill_r.isuse:
-            skill_r.update()
-        skill_e.update()
-        hero.rect.update()
-
+        return False
     def draw(self):
         
-        self.exp_image.clip_draw(0, 0, 465,48, TUK_WIDTH / 2, TUK_HEIGHT, TUK_WIDTH, 20)
-        self.hp_image.clip_draw(0, 0, 465,48, self.rect.x, self.rect.y + 50, self.hp, 10)
         for i in range(len(normal_bullet)):
             normal_bullet[i].draw()
         for i in range(len(skill_q)):
@@ -266,7 +296,12 @@ class Hero:
             skill_r.draw()
             if skill_r.move_rate_y >= skill_r.circle.y:
                 skill_r.isuse = False
-        self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
+        if self.die:
+            self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
+        else:    
+            self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
+        self.exp_image.clip_draw(0, 0, 465,48, TUK_WIDTH / 2, TUK_HEIGHT, TUK_WIDTH, 20)
+        self.hp_image.clip_draw(0, 0, 465,48, self.rect.x, self.rect.y + 50, self.hp, 10)
 
 
 normal_bullet = []
@@ -280,7 +315,7 @@ skill_e = None
 hero = None
 running = False
 click = False
-up_image, down_image, up_right_image, down_right_image = None, None, None, None
+up_image, down_image, up_right_image, down_right_image, die_image = None, None, None, None, None
 up_left_image, down_left_image, right_image, left_image, idle_image = None, None, None, None, None
 now_image = None
 TUK_WIDTH, TUK_HEIGHT = 1200, 900
@@ -290,3 +325,4 @@ movesheep = 0
 height, weight = 0, 0
 bheight, bweight = 0, 0
 isMove = False
+hit_time = None

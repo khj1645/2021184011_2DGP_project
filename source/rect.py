@@ -16,11 +16,11 @@ class rect:
         self.top = self.y + self.ry
         # pico2d.draw_rectangle( self.left,self.top,self.right, self.bottom)
 
-    def collide_rect_to_rect(self,rect):
-        return (self.left <= rect.right and
-                self.right >= rect.left and
-                self.top >= rect.bottom and
-                self.bottom <= rect.top)
+    def collide_rect_to_rect(self,r):
+        return (self.left <= r.right and
+                self.right >= r.left and
+                self.top >= r.bottom and
+                self.bottom <= r.top)
 
     def collide_rect_to_circle(self,circle):
         temp = rect()

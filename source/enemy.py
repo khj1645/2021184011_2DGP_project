@@ -2,6 +2,7 @@ from pico2d import *
 import circle
 import random
 import character
+import item
 
 enemys = None
 maketime = None
@@ -37,19 +38,36 @@ class enemy:
         self.hp = 50
         self.frame = 0
         self.max_frame = enemy.frame[self.type]
+        if self.type == 0:
+            self.speed_x = 6
+            self.speed_y = 3
+        else:
+            self.speed_x = 4
+            self.speed_y = 2
+        self.die = False
     def update(self):
-        self.image = load_image(self.image_list[self.frame % self.max_frame])
-        self.frame +=1
-        if self.circle.x < character.hero.rect.x:
-            self.circle.x += 4 - character.hero.unit_x
-        if self.circle.x > character.hero.rect.x:
-            self.circle.x += -4 - character.hero.unit_x
-        if self.circle.y < character.hero.rect.y:
-            self.circle.y += 2 - character.hero.unit_y
-        if self.circle.y > character.hero.rect.y:
-            self.circle.y += -2 - character.hero.unit_y
+        if self.die:
+            if self.frame >=3:
+                return True
+            self.image = load_image(self.image_list[self.frame % self.max_frame])
+            self.frame +=1
+        else:
+            self.image = load_image(self.image_list[self.frame % self.max_frame])
+            self.frame +=1
+            if self.circle.x < character.hero.rect.x:
+                self.circle.x += self.speed_x - character.hero.unit_x
+            if self.circle.x > character.hero.rect.x:
+                self.circle.x += -1 * self.speed_x - character.hero.unit_x
+            if self.circle.y < character.hero.rect.y:
+                self.circle.y += self.speed_y - character.hero.unit_y
+            if self.circle.y > character.hero.rect.y:
+                self.circle.y += -1 * self.speed_y - character.hero.unit_y
+        return False
     def draw(self):
-        self.image.clip_draw(0, 0, enemy.image_x[self.type], enemy.image_y[self.type], self.circle.x, self.circle.y, self.circle.r * 2, self.circle.r * 2)
+        if self.die:
+            self.image.clip_draw(0, 0, 180, 180, self.circle.x, self.circle.y, self.circle.r * 2, self.circle.r * 2)
+        else:  
+            self.image.clip_draw(0, 0, enemy.image_x[self.type], enemy.image_y[self.type], self.circle.x, self.circle.y, self.circle.r * 2, self.circle.r * 2)
 
 def enter():
     global enemys, maketime
@@ -63,8 +81,15 @@ def update():
         maketime = 0.5
         enemys.append(enemy())
     for enem in enemys[:]:
-        enem.update()
-        if(enem.hp <= 0):
+        if(enem.hp <= 0 and enem.die == False):
+            enem.die = True
+            enem.speed_x = enem.speed_y = enem.frame = 0
+            enem.max_frame = 3
+            enem.image_list = ['Unit16Motion_DeathA1.png', 'Unit16Motion_DeathB1.png', 'Unit16Motion_DeathC1.png']
+            if random.randint(0,10) < 3:
+                item.items.append(item.item(enem.circle.x,enem.circle.y))
+                
+        if enem.update():
             enemys.remove(enem)
 def draw():
     for enemy in enemys:

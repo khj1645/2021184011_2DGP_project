@@ -3,7 +3,8 @@ import character
 import background
 import enemy
 import game_framework
-
+import lobby
+import item
 running = None
 
 def handle_events():
@@ -13,7 +14,7 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            game_framework.quit()
+            game_framework.change_state(lobby)
         else:
             character.handle_events(event)
 
@@ -24,6 +25,7 @@ def enter():
     character.enter()
     background.enter()
     enemy.enter()
+    item.enter()
 
 def exit():
     pass
@@ -31,13 +33,15 @@ def exit():
 def draw():
     clear_canvas()
     background.update()
-    character.draw()
     enemy.draw()
+    item.draw()
+    character.draw()
     update_canvas()
 
 def update():
     character.update()
     enemy.update()
+    item.update()
     delay(0.016)
 
 def pause():
