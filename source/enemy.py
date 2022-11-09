@@ -3,7 +3,8 @@ import circle
 import random
 import character
 import item
-
+import game_framework
+import levelup
 enemys = None
 maketime = None
 
@@ -91,6 +92,12 @@ def update():
                 
         if enem.update():
             enemys.remove(enem)
+            character.hero.exp += 70
+            if character.hero.exp >=100:
+                game_framework.push_state(levelup)
+                character.hero.lv += 1
+                print(character.hero.lv)
+                character.hero.exp = 100 - character.hero.exp
 def draw():
     for enemy in enemys:
         enemy.draw()

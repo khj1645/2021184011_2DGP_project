@@ -25,7 +25,7 @@ def update():
         background_pos[i].x -= character.hero.unit_x
         background_pos[i].y -= character.hero.unit_y
         background_pos[i].update()
-        backgrounds.clip_draw(0, 0, 500, 500, background_pos[i].x, background_pos[i].y, 2000, 2000)
+        # backgrounds.clip_draw(0, 0, 500, 500, background_pos[i].x, background_pos[i].y, 2000, 2000)
 
     for i in range(0,9):
         if background_pos[i].right < 0:
@@ -37,3 +37,8 @@ def update():
         elif background_pos[i].bottom > 900:
             background_pos[i].y -= 4000
         background_pos[i].update()
+
+def draw():
+    global background_pos
+    for i in range(0,9):
+        backgrounds.clip_draw(0, 0, 500, 500, background_pos[i].x, background_pos[i].y, 2000, 2000)

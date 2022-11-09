@@ -300,7 +300,7 @@ class Hero:
             self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
         else:    
             self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
-        self.exp_image.clip_draw(0, 0, 465,48, TUK_WIDTH / 2, TUK_HEIGHT, TUK_WIDTH, 20)
+        self.exp_image.clip_draw(0, 0, 465,48, TUK_WIDTH / 2, TUK_HEIGHT, TUK_WIDTH * (self.exp / 100), 20)
         self.hp_image.clip_draw(0, 0, 465,48, self.rect.x, self.rect.y + 50, self.hp, 10)
 
 

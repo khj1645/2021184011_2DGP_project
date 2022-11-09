@@ -1,7 +1,5 @@
 import pico2d
 import game_framework
-
-import main
 import lobby
 import os
 

@@ -1,6 +1,9 @@
 from pico2d import *
-import main
+import character
+import enemy
+import background
 import game_framework
+import item
 
 image = None
 
@@ -12,23 +15,26 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
-            game_framework.change_state(main)
+            game_framework.pop_state()
 
 
 def enter():
     global image
-    image = load_image('TitleImgFront1.png')
+    image = load_image('081_아이템창.png')
     pass
 
 def exit():
-    global image
-    del image
     pass
 
 def draw():
     global image
     clear_canvas()
-    image.clip_draw(0,0,720,1080,600,450,1200,900)
+    # main.draw()
+    background.draw()
+    enemy.draw()
+    item.draw()
+    character.draw()
+    image.clip_draw(0,0,922,2048,600,450,400,800)
     update_canvas()
 
 def update():

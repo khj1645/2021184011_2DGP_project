@@ -32,13 +32,14 @@ def exit():
 
 def draw():
     clear_canvas()
-    background.update()
+    background.draw()
     enemy.draw()
     item.draw()
     character.draw()
     update_canvas()
 
 def update():
+    background.update()
     character.update()
     enemy.update()
     item.update()
