@@ -4,6 +4,19 @@ import character
 import rect
 import circle
 import enemy
+
+normal_bullet_damage = 5
+skill_q_damage = 50
+skill_w_damage = 30
+skill_e_damage = 0.5
+skill_r_damage = 100
+
+normal_bullet_level = 1
+skill_q_level = 1
+skill_w_level = 1
+skill_e_level = 1
+skill_r_level = 1
+
 class normal_bullet:
     image = None
     def __init__(self):
@@ -29,7 +42,7 @@ class normal_bullet:
             return True
         for ene in enemy.enemys:
             if(self.circle.collide_circle_to_circle(ene.circle)):
-                ene.hp -=5
+                ene.hp -= normal_bullet_damage
                 return True
         return False
     def draw(self):
@@ -65,7 +78,7 @@ class skill_q:
             return True
         for ene in enemy.enemys:
             if(self.circle.collide_circle_to_circle(ene.circle)):
-                ene.hp -=50
+                ene.hp -= skill_q_damage
                 return True
         return False
     def draw(self):
@@ -92,7 +105,7 @@ class skill_e:
         self.image = load_image(self.image_list[self.frame])
         for ene in enemy.enemys:
             if self.circle.collide_circle_to_circle(ene.circle):
-                ene.hp -= 0.5
+                ene.hp -= skill_e_damage
        
     def draw(self):
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
@@ -125,7 +138,7 @@ class skill_w:
             for ene in enemy.enemys:
                 for i in range(3):
                     if self.rect[i].collide_rect_to_circle(ene.circle):
-                        ene.hp -=30
+                        ene.hp -= skill_w_damage
         self.frame += 1
         self.image = load_image(self.image_list[self.frame % 3])
         self.effect = load_image(self.effect_list[self.frame % 6])

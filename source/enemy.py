@@ -96,7 +96,6 @@ def update():
             if character.hero.exp >=100:
                 game_framework.push_state(levelup)
                 character.hero.lv += 1
-                print(character.hero.lv)
                 character.hero.exp = 100 - character.hero.exp
 def draw():
     for enemy in enemys:

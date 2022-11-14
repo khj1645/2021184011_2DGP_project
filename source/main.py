@@ -50,11 +50,3 @@ def pause():
 
 def resume():
     pass
-# enter()
-# while(running):
-#     handle_events()
-#     clear_canvas()
-#     draw()
-#     update()
-#     update_canvas()  
-#     delay(0.016)
