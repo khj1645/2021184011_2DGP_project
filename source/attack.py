@@ -8,8 +8,8 @@ import enemy
 normal_bullet_damage = 5
 skill_q_damage = 50
 skill_w_damage = 30
-skill_e_damage = 0.5
-skill_r_damage = 100
+skill_e_damage = 0.005
+skill_r_damage = 200
 
 normal_bullet_level = 1
 skill_q_level = 1
@@ -154,8 +154,10 @@ class skill_w:
 
 class skill_r:
     image = None
+    explosion_image = None
     def __init__(self):
         self.isuse = False
+        self.isexplo = False
         self.move_rate_y = 0
         self.move_rate_x = 0
         self.image_x = 330
@@ -166,16 +168,33 @@ class skill_r:
         self.circle.r = 150
         self.frame = -1
         if skill_r.image == None:
-            self.image_list = ['MeteorC1.png','MeteorC2.png']
+            self.image_list = ['MeteorC1.png','MeteorC2.png', 'MetorC3.png']
+            self.explosion_image_list = ['Explosion54_02.png','Explosion54_03.png',
+                                         'Explosion54_04.png','Explosion54_05.png',
+                                         ]
             self.image = load_image(self.image_list[0])
     def update(self):
-        self.circle.update()
-        self.frame +=1
-        self.frame %=2
-        self.circle.y -= 10
-        self.circle.x += 1
-        self.image = load_image(self.image_list[self.frame])
+        if self.isexplo:
+            if self.frame >= 3:
+                self.isuse = False
+                self.isexplo = False
+                return
+            self.frame += 1
+            self.image = load_image(self.explosion_image_list[self.frame])
+        else:
+            self.circle.update()
+            self.frame +=1
+            self.frame %=2
+            self.circle.y -= 20
+            # self.circle.x += 1
+            self.image = load_image(self.image_list[self.frame])
        
     def draw(self):
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
-        self.image.clip_draw(0, 0, self.image_x, self.image_y, self.circle.x, self.circle.y, self.circle.r * 2, self.circle.r * 2)
+        if self.isexplo:
+            self.image.clip_draw(0, 0, 524, 556, self.circle.x, self.circle.y, 600, 600)
+            draw_rectangle(self.circle.x - self.circle.r, self.circle.y - self.circle.r,
+                           self.circle.x + self.circle.r,self.circle.y + self.circle.r)
+                
+        else:    
+            self.image.clip_draw(0, 0, self.image_x, self.image_y, self.circle.x, self.circle.y, 317, 354)

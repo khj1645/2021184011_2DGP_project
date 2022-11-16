@@ -127,7 +127,7 @@ def arrival():
         isMove = False
 
 def enter():
-    global hero, running, left_image, right_image, idle_image, skill_q_coll_time, skill_e, skill_w, skill_w_coll_time, skill_r, skill_r_cooltime
+    global hero, running, left_image, right_image, idle_image, skill_q_coll_time, skill_e, skill_w, skill_w_coll_time, skill_r, skill_r_cool_time
     global up_image, down_image, up_right_image, down_right_image,up_left_image, down_left_image, now_image, hit_time, die_image
     hero = Hero()
     running = True
@@ -153,13 +153,13 @@ def enter():
     skill_e = attack.skill_e()
 
     skill_w_coll_time = 0
-    skill_r_cooltime = 0
-    skill_r = attack.skill_r()
+    skill_r_cool_time = 0
+    skill_r = []
     skill_w = []
     hit_time = 0
 
 def handle_events(event):
-    global running, click, skill_q_coll_time, skill_w, skill_w_coll_time, skill_r_cooltime, skill_r
+    global running, click, skill_q_coll_time, skill_w, skill_w_coll_time, skill_r_cool_time, skill_r
     if event.type == SDL_QUIT:
             running = False
     elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_RIGHT:
@@ -192,16 +192,18 @@ def handle_events(event):
                 skill_w[len(skill_w) - 1].rect[0].x = event.x
 
     elif event.key == SDLK_r:
-            if(skill_r_cooltime <= 0):
-                #skill_r_cooltime = 3
+            if(skill_r_cool_time <= 0):
+                skill_r_temp = attack.skill_r()
+                skill_r_cool_time = 2
                 x, y = ctypes.c_int(0), ctypes.c_int(0)
                 buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
                 event.x = x.value
                 event.y = y.value
-                skill_r.move_rate_y = TUK_HEIGHT - 1 - event.y
-                skill_r.circle.x = x.value
-                skill_r.circle.y = 1350
-                skill_r.isuse = True
+                skill_r_temp.move_rate_y = TUK_HEIGHT - 1 - event.y
+                skill_r_temp.circle.x = x.value
+                skill_r_temp.circle.y = 1350
+                skill_r_temp.isuse = True
+                skill_r.append(skill_r_temp)
 
 def update():
     global hit_time, now_image, die_image
@@ -242,7 +244,7 @@ class Hero:
         self.rect.update()
 
     def update(self):
-        global movesheep, skill_q_coll_time, skill_w_coll_time, hit_time
+        global movesheep, skill_q_coll_time, skill_w_coll_time, hit_time, skill_r_cool_time
         if hero.die:
             if self.frame >= 4:
                 return True
@@ -251,6 +253,7 @@ class Hero:
         else:
             skill_q_coll_time -= 0.016
             skill_w_coll_time -= 0.016
+            skill_r_cool_time -= 0.016
             self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
             self.image = load_image(now_image[self.frame])
             if(isMove):
@@ -278,8 +281,17 @@ class Hero:
                     if self.rect.collide_rect_to_rect(it.rect):
                         self.hp += 20
                         item.items.remove(it)
-            if skill_r.isuse:
-                skill_r.update()
+            for a in skill_r[:]:
+                a.update()
+                if a.move_rate_y >= a.circle.y and not a.isexplo:
+                    a.circle.r = 200
+                    for ene in enemy.enemys:
+                        if a.circle.collide_circle_to_circle(ene.circle):
+                            ene.hp -= attack.skill_r_damage
+                    a.frame = -1
+                    a.isexplo = True
+                if not a.isuse:
+                    skill_r.remove(a)
             skill_e.update()
             self.rect.update()
         return False
@@ -292,10 +304,8 @@ class Hero:
         for i in range(len(skill_w)):
             skill_w[i].draw()
         skill_e.draw()
-        if skill_r.isuse:
-            skill_r.draw()
-            if skill_r.move_rate_y >= skill_r.circle.y:
-                skill_r.isuse = False
+        for a in skill_r:
+            a.draw()
         if self.die:
             self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
         else:    
@@ -307,10 +317,10 @@ class Hero:
 normal_bullet = []
 skill_q= []
 skill_w= []
-skill_r = None
+skill_r = []
 skill_q_coll_time = None
 skill_w_coll_time = None
-skill_r_cooltime = None
+skill_r_cool_time = None
 skill_e = None
 hero = None
 running = False

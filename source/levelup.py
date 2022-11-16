@@ -33,6 +33,8 @@ def upgrade(n):
         attack.skill_e_level += 1
         pass
     if n == 4:
+        attack.skill_r_damage += attack.skill_r_damage / 10
+        attack.skill_r_level += 1
         pass
     if n == 5:
         pass
