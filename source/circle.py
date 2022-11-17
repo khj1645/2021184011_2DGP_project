@@ -6,8 +6,16 @@ class circle:
         self.x = 0
         self.y = 0
         self.r = 0
+        self.left = 0
+        self.right = 0
+        self.top = 0
+        self.bottom = 0
     def update(self):
-        pico2d.draw_rectangle( self.x - self.r,self.y - self.r,self.x + self.r, self.y + self.r)
+        self.left = self.x - self.r
+        self.right = self.x + self.r
+        self.bottom = self.y - self.r
+        self.top = self.y + self.r
+        pico2d.draw_rectangle( self.left,self.top,self.right, self.bottom)
         
     def collide_circle_to_circle(self,circle):
         if ((self.x - circle.x) ** 2) + ((self.y - circle.y) ** 2) > (self.r + circle.r) ** 2:
