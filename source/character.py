@@ -15,7 +15,6 @@ def setMove(event):
     weight = abs(mouse_x - hero.rect.x)
     _R = math.sqrt((height*height) + (weight*weight))
     _S = _R/5
-    0
     hero.unit_y = height / _S
     hero.unit_x = weight / _S
     radian = math.atan2(mouse_y - hero.rect.y, mouse_x - hero.rect.x)
@@ -182,6 +181,7 @@ def handle_events(event):
                 event.x = x.value
                 event.y = y.value
                 setBullet(event,skill_q)
+                print(get_time())
     elif event.key == SDLK_w:
             if(skill_w_coll_time <= 0):
                 skill_w_coll_time = 0.5
@@ -208,7 +208,7 @@ def handle_events(event):
 def update():
     global hit_time, now_image, die_image
     if hit_time > 0:
-        hit_time -= 0.016
+        hit_time -= game_framework.frame_time
     if hero.hp <=0 and hero.die == False:
         hero.die = True
         hero.image_x = 40
@@ -251,9 +251,9 @@ class Hero:
             self.image = load_image(now_image[self.frame % 4])
             self.frame = self.frame + 1
         else:
-            skill_q_coll_time -= 0.016
-            skill_w_coll_time -= 0.016
-            skill_r_cool_time -= 0.016
+            skill_q_coll_time -= game_framework.frame_time
+            skill_w_coll_time -= game_framework.frame_time
+            skill_r_cool_time -= game_framework.frame_time
             self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
             self.image = load_image(now_image[self.frame])
             if(isMove):
@@ -275,7 +275,7 @@ class Hero:
             for ene in enemy.enemys:
                 if hit_time <= 0:
                     if hero.rect.collide_rect_to_circle(ene.circle):
-                        self.hp -= 40
+                        # self.hp -= 40
                         hit_time = 0.5
             for it in item.items[:]:
                     if self.rect.collide_rect_to_rect(it.rect):

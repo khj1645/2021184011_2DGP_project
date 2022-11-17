@@ -17,10 +17,12 @@ class rect:
         # pico2d.draw_rectangle( self.left,self.top,self.right, self.bottom)
 
     def collide_rect_to_rect(self,r):
-        return (self.left <= r.right and
-                self.right >= r.left and
-                self.top >= r.bottom and
-                self.bottom <= r.top)
+        if self.left > r.right: return False
+        if self.right < r.left: return False
+        if self.top < r.bottom: return False
+        if self.bottom > r.top: return False
+        return True
+       
 
     def collide_rect_to_circle(self,circle):
         temp = rect()

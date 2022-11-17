@@ -6,7 +6,10 @@ import game_framework
 import lobby
 import item
 running = None
-
+font = None
+play_time = None
+minute = None
+second = None
 def handle_events():
     global running
     events = get_events()
@@ -20,8 +23,10 @@ def handle_events():
 
 
 def enter():
-    global running
+    global running, font, minute, second
     running = True
+    font = load_font('ENCR10B.TTF', 16)
+    minute, second = 0, 0
     character.enter()
     background.enter()
     enemy.enter()
@@ -31,19 +36,25 @@ def exit():
     pass
 
 def draw():
+    global minute, second
     clear_canvas()
     background.draw()
     enemy.draw()
     item.draw()
     character.draw()
+    font.draw(600, 450, f'{minute} : {second}', (0, 0, 0))
     update_canvas()
 
 def update():
+    global play_time, minute, second
+    play_time = get_time() - lobby.play_time
+    minute = int(play_time // 60)
+    second = int(play_time % 60)
     background.update()
     character.update()
     enemy.update()
     item.update()
-    delay(0.016)
+    # delay(0.016)
 
 def pause():
     pass

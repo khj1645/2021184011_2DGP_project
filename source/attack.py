@@ -185,7 +185,7 @@ class skill_r:
             self.circle.update()
             self.frame +=1
             self.frame %=2
-            self.circle.y -= 20
+            self.circle.y -= 30
             # self.circle.x += 1
             self.image = load_image(self.image_list[self.frame])
        

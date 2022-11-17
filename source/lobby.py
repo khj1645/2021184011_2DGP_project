@@ -3,7 +3,7 @@ import main
 import game_framework
 
 image = None
-
+play_time = None
 def handle_events():
     events = get_events()
     for event in events:
@@ -32,6 +32,8 @@ def draw():
     update_canvas()
 
 def update():
+    global play_time
+    play_time = get_time()
     pass
 
 def pause():
