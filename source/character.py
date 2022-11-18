@@ -6,15 +6,16 @@ import lobby
 import game_framework
 import enemy
 import item
+import background
 
 def setMove(event):
-    global mouse_x, mouse_y, isMove, hero,  height, weight, movesheep, now_image
+    global mouse_x, mouse_y, isMove, hero,  height, weight, movesheep, now_image, speed
     movesheep = 0
     mouse_x, mouse_y = event.x, TUK_HEIGHT - 1 - event.y
     height = abs(mouse_y - hero.rect.y)
     weight = abs(mouse_x - hero.rect.x)
     _R = math.sqrt((height*height) + (weight*weight))
-    _S = _R/5
+    _S = _R/speed
     hero.unit_y = height / _S
     hero.unit_x = weight / _S
     radian = math.atan2(mouse_y - hero.rect.y, mouse_x - hero.rect.x)
@@ -127,11 +128,14 @@ def arrival():
 
 def enter():
     global hero, running, left_image, right_image, idle_image, skill_q_coll_time, skill_e, skill_w, skill_w_coll_time, skill_r, skill_r_cool_time
-    global up_image, down_image, up_right_image, down_right_image,up_left_image, down_left_image, now_image, hit_time, die_image
-    hero = Hero()
+    global up_image, down_image, up_right_image, down_right_image,up_left_image, down_left_image, now_image, hit_time, die_image, hero_hp
+    global hp_level, int_level, speed_level, speed
+    hp_level, int_level, speed_level, speed = 1, 1, 1, 5
     running = True
     right_image = ['Unit3Motion_MoveC1.png','Unit3Motion_MoveC2.png','Unit3Motion_MoveC3.png']
     left_image = ['Unit3Motion_MoveCx1.png','Unit3Motion_MoveCx2.png','Unit3Motion_MoveCx3.png']
+    hero_hp = 100
+    hero = Hero()
 
     up_right_image = ['Unit3Motion_MoveB1.png','Unit3Motion_MoveB2.png','Unit3Motion_MoveB3.png']
     up_left_image = ['Unit3Motion_MoveBx1.png','Unit3Motion_MoveBx2.png','Unit3Motion_MoveBx3.png']
@@ -208,8 +212,8 @@ def handle_events(event):
 def update():
     global hit_time, now_image, die_image
     if hit_time > 0:
-        hit_time -= game_framework.frame_time
-    if hero.hp <=0 and hero.die == False:
+        hit_time -= 0.016 # + game_framework.frame_time + 
+    if hero.hp <= 0 and hero.die == False:
         hero.die = True
         hero.image_x = 40
         hero.image_y = 70
@@ -229,7 +233,7 @@ class Hero:
         self.rect = rect.rect()
         self.exp = 0
         self.lv = 1
-        self.hp = 100
+        self.hp = hero_hp
         self.image_x = 31
         self.image_y = 67
         self.frame = 0
@@ -244,16 +248,16 @@ class Hero:
         self.rect.update()
 
     def update(self):
-        global movesheep, skill_q_coll_time, skill_w_coll_time, hit_time, skill_r_cool_time
+        global movesheep, skill_q_coll_time, skill_w_coll_time, hit_time, skill_r_cool_time, hero_hp
         if hero.die:
             if self.frame >= 4:
                 return True
             self.image = load_image(now_image[self.frame % 4])
             self.frame = self.frame + 1
         else:
-            skill_q_coll_time -= game_framework.frame_time
-            skill_w_coll_time -= game_framework.frame_time
-            skill_r_cool_time -= game_framework.frame_time
+            skill_q_coll_time -= 0.016 # + game_framework.frame_time + 
+            skill_w_coll_time -= 0.016 # + game_framework.frame_time + 
+            skill_r_cool_time -= 0.016 # + game_framework.frame_time + 
             self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
             self.image = load_image(now_image[self.frame])
             if(isMove):
@@ -275,11 +279,15 @@ class Hero:
             for ene in enemy.enemys:
                 if hit_time <= 0:
                     if hero.rect.collide_rect_to_circle(ene.circle):
-                        # self.hp -= 40
+                        self.hp -= 40
+                        background.hit = True
+                        background.hitcnt = 0
                         hit_time = 0.5
             for it in item.items[:]:
                     if self.rect.collide_rect_to_rect(it.rect):
                         self.hp += 20
+                        if self.hp > hero_hp:
+                            self.hp = hero.hp
                         item.items.remove(it)
             for a in skill_r[:]:
                 a.update()
@@ -336,3 +344,5 @@ height, weight = 0, 0
 bheight, bweight = 0, 0
 isMove = False
 hit_time = None
+hero_hp = None
+hp_level, int_level, speed_level, speed = None, None, None, None

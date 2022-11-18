@@ -25,7 +25,7 @@ def handle_events():
 def enter():
     global running, font, minute, second
     running = True
-    font = load_font('ENCR10B.TTF', 16)
+    font = load_font('JejuHallasan.ttf', 32)
     minute, second = 0, 0
     character.enter()
     background.enter()
@@ -42,7 +42,7 @@ def draw():
     enemy.draw()
     item.draw()
     character.draw()
-    font.draw(600, 450, f'{minute} : {second}', (0, 0, 0))
+    font.draw(568, 850, f'{minute} : {second}', (0, 0, 0))
     update_canvas()
 
 def update():
@@ -54,7 +54,7 @@ def update():
     character.update()
     enemy.update()
     item.update()
-    # delay(0.016)
+    delay(0.016)
 
 def pause():
     pass

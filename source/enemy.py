@@ -33,9 +33,9 @@ class enemy:
         self.circle.x = random.randint(0,1200)
         self.circle.y = random.randint(0,900)
         if self.circle.y >= 450:
-            self.circle.y += random.randint(500,700)
+            self.circle.y += random.randint(600,800)
         else:
-            self.circle.y -= random.randint(500,700)
+            self.circle.y -= random.randint(600,800)
             
         self.circle.r = enemy.radius[self.type]
         self.hp = 50
@@ -101,7 +101,7 @@ def enter():
 
 def update():
     global enemys, maketime, make_limit, make_flag
-    maketime -= game_framework.frame_time
+    maketime -= 0.016 # + game_framework.frame_time + 
     if(maketime <= 0):
         maketime = make_limit
         enemys.append(enemy())

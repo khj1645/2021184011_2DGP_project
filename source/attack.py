@@ -8,7 +8,7 @@ import enemy
 normal_bullet_damage = 5
 skill_q_damage = 50
 skill_w_damage = 30
-skill_e_damage = 0.005
+skill_e_damage = 1
 skill_r_damage = 200
 
 normal_bullet_level = 1
@@ -185,7 +185,8 @@ class skill_r:
             self.circle.update()
             self.frame +=1
             self.frame %=2
-            self.circle.y -= 30
+            self.circle.y -= 20 + character.hero.unit_y
+            self.circle.x -= +character.hero.unit_x
             # self.circle.x += 1
             self.image = load_image(self.image_list[self.frame])
        
@@ -193,8 +194,8 @@ class skill_r:
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
         if self.isexplo:
             self.image.clip_draw(0, 0, 524, 556, self.circle.x, self.circle.y, 600, 600)
-            draw_rectangle(self.circle.x - self.circle.r, self.circle.y - self.circle.r,
-                           self.circle.x + self.circle.r,self.circle.y + self.circle.r)
+            # draw_rectangle(self.circle.x - self.circle.r, self.circle.y - self.circle.r,
+                           # self.circle.x + self.circle.r,self.circle.y + self.circle.r)
                 
         else:    
             self.image.clip_draw(0, 0, self.image_x, self.image_y, self.circle.x, self.circle.y, 317, 354)
