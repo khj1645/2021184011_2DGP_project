@@ -23,13 +23,19 @@ def upgrade(n):
         print("평타 업글")
         pass
     if n == 1:
-        attack.skill_q_damage += attack.skill_q_damage / 20
+        if attack.skill_q_level % 2 != 0:
+            attack.skill_q_damage += attack.skill_q_damage / 20
+        else:
+            character.skill_q_coll_time = character.skill_q_coll_time - character.skill_q_coll_time / 10
         attack.skill_q_level += 1
         print("q 업글")
         pass
     if n == 2:
-        attack.skill_w_damage += attack.skill_w_damage / 20
-        attack.skill_w_level += 1
+        if attack.skill_w_level % 2 != 0:
+            attack.skill_w_damage += attack.skill_w_damage / 20
+            attack.skill_w_level += 1
+        else:
+            character.skill_w_coll_time = character.skill_w_coll_time - character.skill_w_coll_time / 10
         print("w 업글")
         # attack.skill_w_damage = attack.skill_w_damage + 50
         
@@ -40,8 +46,11 @@ def upgrade(n):
         print("e 업글")
         pass
     if n == 4:
-        attack.skill_r_damage += attack.skill_r_damage / 20
-        attack.skill_r_level += 1
+        if attack.skill_r_level % 2 != 0:
+            attack.skill_r_damage += attack.skill_r_damage / 20
+            attack.skill_r_level += 1
+        else:
+            character.skill_r_coll_time = character.skill_r_coll_time - character.skill_r_coll_time / 10
         print("r 업글")
         pass
     if n == 5:
@@ -125,9 +134,6 @@ def draw():
             if attack.normal_bullet_level % 2 != 0:
                 small_font.draw(400, 250 * i + 200, f'{skill_name[image_index[i]]}의 데미지 20% 증가', (255, 255, 255))
                 small_font.draw(900, 250 * i + 240, f'Lv  {attack.normal_bullet_level}', (204, 204, 0))
-            else:
-                small_font.draw(400, 250 * i + 200, f'{skill_name[image_index[i]]}의 쿨타임 10% 감소', (255, 255, 255))
-                small_font.draw(900, 250 * i + 240, f'Lv  {attack.normal_bullet_level}', (204, 204, 0))
 
         if image_index[i] == 1:
             if attack.skill_q_level % 2 != 0:
@@ -149,7 +155,7 @@ def draw():
             small_font.draw(400, 250 * i + 200, f'{skill_name[image_index[i]]}의 데미지 20% 증가', (255, 255, 255))
             small_font.draw(900, 250 * i + 240, f'Lv  {attack.skill_e_level}', (204, 204, 0))
         if image_index[i] == 4:
-            if attack.skill_w_level % 2 != 0:
+            if attack.skill_r_level % 2 != 0:
                 small_font.draw(400, 250 * i + 200, f'{skill_name[image_index[i]]}의 데미지 10% 증가', (255, 255, 255))
                 small_font.draw(900, 250 * i + 240, f'Lv  {attack.skill_r_level}', (204, 204, 0))
             else:
