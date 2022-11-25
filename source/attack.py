@@ -23,7 +23,6 @@ class normal_bullet:
         self.image_x = 43
         self.image_y = 24
         
-        
         self.circle = circle.circle()
         self.circle.x = character.hero.rect.x
         self.circle.y = character.hero.rect.y
@@ -38,13 +37,6 @@ class normal_bullet:
         self.circle.y += self.unit_y - character.hero.unit_y
         self.circle.update()
        # self.rect.update()
-        if(self.circle.x > character.TUK_WIDTH or self.circle.x < 0 or self.circle.y > character.TUK_HEIGHT or self.circle.y < 0):
-            return True
-        for ene in enemy.enemys:
-            if(self.circle.collide_circle_to_circle(ene.circle)):
-                ene.hp -= normal_bullet_damage
-                return True
-        return False
     def draw(self):
         self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,43,24)
         #self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, self.image_x, self.image_x)
@@ -74,13 +66,6 @@ class skill_q:
         self.frame +=1
         self.frame %=3
         self.image = load_image(self.image_list[self.frame])
-        if(self.circle.x > character.TUK_WIDTH or self.circle.x < 0 or self.circle.y > character.TUK_HEIGHT or self.circle.y < 0):
-            return True
-        for ene in enemy.enemys:
-            if(self.circle.collide_circle_to_circle(ene.circle)):
-                ene.hp -= skill_q_damage
-                return True
-        return False
     def draw(self):
         self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,80,64)
         #self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, self.image_x, self.image_x)
@@ -103,9 +88,7 @@ class skill_e:
         self.frame +=1
         self.frame %=3
         self.image = load_image(self.image_list[self.frame])
-        for ene in enemy.enemys:
-            if self.circle.collide_circle_to_circle(ene.circle):
-                ene.hp -= skill_e_damage
+
        
     def draw(self):
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
@@ -132,13 +115,6 @@ class skill_w:
             self.image = load_image(self.image_list[0])
             self.effect = load_image(self.effect_list[0])
     def update(self):
-        if self.frame >= 6:
-            return True
-        if self.frame == 0:
-            for ene in enemy.enemys:
-                for i in range(3):
-                    if self.rect[i].collide_rect_to_circle(ene.circle):
-                        ene.hp -= skill_w_damage
         self.frame += 1
         self.image = load_image(self.image_list[self.frame % 3])
         self.effect = load_image(self.effect_list[self.frame % 6])
@@ -178,14 +154,14 @@ class skill_r:
             if self.frame >= 3:
                 self.isuse = False
                 self.isexplo = False
-                return
-            self.frame += 1
-            self.image = load_image(self.explosion_image_list[self.frame])
+            else:
+                self.frame += 1
+                self.image = load_image(self.explosion_image_list[self.frame])
         else:
             self.circle.update()
             self.frame +=1
             self.frame %=2
-            self.circle.y -= 20 + character.hero.unit_y
+            self.circle.y -= 30 + character.hero.unit_y
             self.circle.x -= +character.hero.unit_x
             # self.circle.x += 1
             self.image = load_image(self.image_list[self.frame])

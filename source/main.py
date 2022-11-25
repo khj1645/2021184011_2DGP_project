@@ -3,8 +3,11 @@ import character
 import background
 import enemy
 import game_framework
+import game_world
 import lobby
 import item
+import attack
+
 running = None
 font = None
 play_time = None
@@ -39,9 +42,9 @@ def draw():
     global minute, second
     clear_canvas()
     background.draw()
-    enemy.draw()
-    item.draw()
-    character.draw()
+    for game_object in game_world.all_objects():
+        game_object.draw()
+
     font.draw(568, 850, f'{minute} : {second}', (0, 0, 0))
     update_canvas()
 
@@ -51,9 +54,13 @@ def update():
     minute = int(play_time // 60)
     second = int(play_time % 60)
     background.update()
-    character.update()
-    enemy.update()
-    item.update()
+    for game_object in game_world.all_objects():
+        game_object.update()
+
+    collide()
+
+    enemy.make_enemy()
+    enemy.check_enemy()
     delay(0.016)
 
 def pause():
@@ -61,3 +68,69 @@ def pause():
 
 def resume():
     pass
+
+def collide():
+    for ene in enemy.enemys:
+        if character.hit_time <= 0:
+                if character.hero.rect.collide_rect_to_circle(ene.circle):
+                    character.hero.hp -= 40
+                    background.hit = True
+                    background.hitcnt = 0
+                    character.hit_time = 0.5
+        if character.skill_e.circle.collide_circle_to_circle(ene.circle):
+                ene.hp -= attack.skill_e_damage
+    for it in item.items[:]:
+        if character.hero.rect.collide_rect_to_rect(it.rect):
+            if character.hero.hp < character.hero_hp:
+                character.hero.hp += 20
+            if character.hero.hp > character.hero_hp:
+                character.hero.hp = character.hero.hp
+            item.items.remove(it)
+            game_world.remove_object(it)
+            
+    for normal in character.normal_bullet[:]:
+        if(normal.circle.x > character.TUK_WIDTH or normal.circle.x < 0 or normal.circle.y > character.TUK_HEIGHT or normal.circle.y < 0):
+            character.normal_bullet.remove(normal)
+            game_world.remove_object(normal) 
+        else:
+            for ene in enemy.enemys:
+                if(normal.circle.collide_circle_to_circle(ene.circle)):
+                    ene.hp -= attack.normal_bullet_damage
+                    character.normal_bullet.remove(normal)
+                    game_world.remove_object(normal)
+                    break
+
+    for q in character.skill_q[:]:
+        if(q.circle.x > character.TUK_WIDTH or q.circle.x < 0 or q.circle.y > character.TUK_HEIGHT or q.circle.y < 0):
+            character.skill_q.remove(q)
+            game_world.remove_object(q)
+        else:
+            for ene in enemy.enemys:
+                if(q.circle.collide_circle_to_circle(ene.circle)):
+                    ene.hp -= attack.skill_q_damage
+                    character.skill_q.remove(q)
+                    game_world.remove_object(q)
+                    break
+
+    for w in character.skill_w[:]:
+        if w.frame >= 6:
+            character.skill_w.remove(w)
+            game_world.remove_object(w)
+            continue
+        if w.frame == 0:
+            for ene in enemy.enemys:
+                for i in range(3):
+                    if w.rect[i].collide_rect_to_circle(ene.circle):
+                        ene.hp -= attack.skill_w_damage
+
+    for a in character.skill_r[:]:
+        if a.move_rate_y >= a.circle.y and not a.isexplo:
+            a.circle.r = 300
+            for ene in enemy.enemys:
+                if a.circle.collide_circle_to_circle(ene.circle):
+                    ene.hp -= attack.skill_r_damage
+                a.frame = -1
+                a.isexplo = True
+        if not a.isuse:
+            character.skill_r.remove(a)
+            game_world.remove_object(a)

@@ -4,6 +4,7 @@ import random
 import character
 import item
 import game_framework
+import game_world
 import levelup
 import main
 enemys = None
@@ -30,12 +31,12 @@ class enemy:
                             'Unit22Motion_MoveC.png','Unit22Motion_MoveD.png']
         self.image = load_image(self.image_list[0])
         self.circle = circle.circle()
-        self.circle.x = random.randint(0,1200)
+        self.circle.x = random.randint(-100,1300)
         self.circle.y = random.randint(0,900)
         if self.circle.y >= 450:
-            self.circle.y += random.randint(600,800)
+            self.circle.y += random.randint(1000,1500)
         else:
-            self.circle.y -= random.randint(600,800)
+            self.circle.y -= random.randint(1000,1500)
             
         self.circle.r = enemy.radius[self.type]
         self.hp = 50
@@ -96,15 +97,22 @@ def enter():
     global enemys, maketime, make_limit, make_flag
     enemys = []
     maketime = 0
-    make_limit = 1
+    make_limit = 0.7
     make_flag = False
 
-def update():
-    global enemys, maketime, make_limit, make_flag
+        
+def draw():
+    for enemy in enemys:
+        enemy.draw()
+
+def make_enemy():
+    global maketime, make_limit, make_flag
+    
     maketime -= 0.016 # + game_framework.frame_time + 
     if(maketime <= 0):
         maketime = make_limit
         enemys.append(enemy())
+        game_world.add_object(enemys[len(enemys) - 1],1)
     if (main.second == 0 or main.second == 30):
         if make_flag == False:
             make_flag = True
@@ -113,6 +121,9 @@ def update():
                 make_limit -= 0.1
     else:
         make_flag = False
+
+def check_enemy():
+    global enemys
     for enem in enemys[:]:
         if(enem.hp <= 0 and enem.die == False):
             enem.die = True
@@ -121,15 +132,13 @@ def update():
             enem.image_list = ['Unit16Motion_DeathA1.png', 'Unit16Motion_DeathB1.png', 'Unit16Motion_DeathC1.png']
             if random.randint(0,10) < 3:
                 item.items.append(item.item(enem.circle.x,enem.circle.y))
-        if enem.update():
+                game_world.add_object(item.items[len(item.items) - 1],1)
+
+        if enem.die and enem.frame >=3:
             enemys.remove(enem)
-            character.hero.exp += 70
+            game_world.remove_object(enem)
+            character.hero.exp += 10
             if character.hero.exp >=100:
                 game_framework.push_state(levelup)
                 character.hero.lv += 1
                 character.hero.exp = 100 - character.hero.exp
-       
-                
-def draw():
-    for enemy in enemys:
-        enemy.draw()

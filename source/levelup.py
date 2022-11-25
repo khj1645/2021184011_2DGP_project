@@ -115,6 +115,11 @@ def enter():
     pass
 
 def exit():
+    global image, image_index, big_font, mid_font, small_font, index_list
+    del image
+    del big_font
+    del mid_font
+    del small_font
     pass
 
 def draw():
@@ -131,9 +136,8 @@ def draw():
         back.clip_draw(0,0,220,300,600,250 * i + 200,900,200) # 200, 450, 700
         mid_font.draw(400, 250 * i + 240, skill_name[index_list[i]], (255, 255, 255))
         if image_index[i] == 0:
-            if attack.normal_bullet_level % 2 != 0:
-                small_font.draw(400, 250 * i + 200, f'{skill_name[image_index[i]]}의 데미지 20% 증가', (255, 255, 255))
-                small_font.draw(900, 250 * i + 240, f'Lv  {attack.normal_bullet_level}', (204, 204, 0))
+            small_font.draw(400, 250 * i + 200, f'{skill_name[image_index[i]]}의 데미지 20% 증가', (255, 255, 255))
+            small_font.draw(900, 250 * i + 240, f'Lv  {attack.normal_bullet_level}', (204, 204, 0))
 
         if image_index[i] == 1:
             if attack.skill_q_level % 2 != 0:

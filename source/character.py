@@ -4,6 +4,7 @@ import attack
 import math
 import lobby
 import game_framework
+import game_world
 import enemy
 import item
 import background
@@ -136,6 +137,7 @@ def enter():
     left_image = ['Unit3Motion_MoveCx1.png','Unit3Motion_MoveCx2.png','Unit3Motion_MoveCx3.png']
     hero_hp = 100
     hero = Hero()
+    game_world.add_object(hero,1)
 
     up_right_image = ['Unit3Motion_MoveB1.png','Unit3Motion_MoveB2.png','Unit3Motion_MoveB3.png']
     up_left_image = ['Unit3Motion_MoveBx1.png','Unit3Motion_MoveBx2.png','Unit3Motion_MoveBx3.png']
@@ -154,7 +156,7 @@ def enter():
 
     skill_q_coll_time = 0
     skill_e = attack.skill_e()
-
+    game_world.add_object(skill_e,1)
     skill_w_coll_time = 0
     skill_r_cool_time = 0
     skill_r = []
@@ -175,11 +177,13 @@ def handle_events(event):
             click = False
     elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             normal_bullet.append(attack.normal_bullet())
+            game_world.add_object(normal_bullet[len(normal_bullet) - 1],1)
             setBullet(event, normal_bullet)
     elif event.key == SDLK_q:
             if(skill_q_coll_time <= 0):
                 skill_q_coll_time = 0.5
                 skill_q.append(attack.skill_q())
+                game_world.add_object(skill_q[len(skill_q) - 1],1)
                 x, y = ctypes.c_int(0), ctypes.c_int(0)
                 buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
                 event.x = x.value
@@ -190,6 +194,7 @@ def handle_events(event):
             if(skill_w_coll_time <= 0):
                 skill_w_coll_time = 0.5
                 skill_w.append(attack.skill_w())
+                game_world.add_object(skill_w[len(skill_w) - 1],1)
                 x, y = ctypes.c_int(0), ctypes.c_int(0)
                 buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
                 event.x = x.value
@@ -198,6 +203,7 @@ def handle_events(event):
     elif event.key == SDLK_r:
             if(skill_r_cool_time <= 0):
                 skill_r_temp = attack.skill_r()
+                
                 skill_r_cool_time = 2
                 x, y = ctypes.c_int(0), ctypes.c_int(0)
                 buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
@@ -208,6 +214,7 @@ def handle_events(event):
                 skill_r_temp.circle.y = 1350
                 skill_r_temp.isuse = True
                 skill_r.append(skill_r_temp)
+                game_world.add_object(skill_r_temp,1)
 
 def update():
     global hit_time, now_image, die_image
@@ -249,11 +256,12 @@ class Hero:
 
     def update(self):
         global movesheep, skill_q_coll_time, skill_w_coll_time, hit_time, skill_r_cool_time, hero_hp
-        if hero.die:
+        if self.die:
             if self.frame >= 4:
                 return True
-            self.image = load_image(now_image[self.frame % 4])
-            self.frame = self.frame + 1
+            else:
+                self.image = load_image(now_image[self.frame % 4])
+                self.frame = self.frame + 1
         else:
             skill_q_coll_time -= 0.016 # + game_framework.frame_time + 
             skill_w_coll_time -= 0.016 # + game_framework.frame_time + 
@@ -267,40 +275,7 @@ class Hero:
                 movesheep += self.unit_x
                 self.rect.update()
                 arrival()
-            for a in normal_bullet[:]:
-                if a.update():
-                    normal_bullet.remove(a) 
-            for a in skill_q[:]:
-                if a.update():
-                    skill_q.remove(a) 
-            for a in skill_w[:]:
-                if a.update():
-                    skill_w.remove(a)
-            for ene in enemy.enemys:
-                if hit_time <= 0:
-                    if hero.rect.collide_rect_to_circle(ene.circle):
-                        self.hp -= 40
-                        background.hit = True
-                        background.hitcnt = 0
-                        hit_time = 0.5
-            for it in item.items[:]:
-                    if self.rect.collide_rect_to_rect(it.rect):
-                        self.hp += 20
-                        if self.hp > hero_hp:
-                            self.hp = hero.hp
-                        item.items.remove(it)
-            for a in skill_r[:]:
-                a.update()
-                if a.move_rate_y >= a.circle.y and not a.isexplo:
-                    a.circle.r = 200
-                    for ene in enemy.enemys:
-                        if a.circle.collide_circle_to_circle(ene.circle):
-                            ene.hp -= attack.skill_r_damage
-                    a.frame = -1
-                    a.isexplo = True
-                if not a.isuse:
-                    skill_r.remove(a)
-            skill_e.update()
+
             self.rect.update()
         return False
     def draw(self):
