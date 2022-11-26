@@ -3,6 +3,7 @@ import main
 import game_framework
 
 image = None
+logo = None
 play_time = None
 def handle_events():
     events = get_events()
@@ -16,8 +17,10 @@ def handle_events():
 
 
 def enter():
-    global image
+    global image, logo
+    
     image = load_image('TitleImgFront1.png')
+    logo = load_image('TitleText.png')
     pass
 
 def exit():
@@ -26,9 +29,10 @@ def exit():
     pass
 
 def draw():
-    global image
+    global image, logo
     clear_canvas()
     image.clip_draw(0,0,720,1080,600,450,1200,900)
+    logo.clip_draw(0,0,290,210,800,650,300,200)
     update_canvas()
 
 def update():

@@ -257,15 +257,13 @@ class Hero:
     def update(self):
         global movesheep, skill_q_coll_time, skill_w_coll_time, hit_time, skill_r_cool_time, hero_hp
         if self.die:
-            if self.frame >= 4:
-                return True
-            else:
-                self.image = load_image(now_image[self.frame % 4])
-                self.frame = self.frame + 1
+            self.image = load_image(now_image[self.frame % 4])
+            self.frame = self.frame + 1
         else:
             skill_q_coll_time -= 0.016 # + game_framework.frame_time + 
             skill_w_coll_time -= 0.016 # + game_framework.frame_time + 
             skill_r_cool_time -= 0.016 # + game_framework.frame_time + 
+            hit_time -= 0.016
             self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
             self.image = load_image(now_image[self.frame])
             if(isMove):

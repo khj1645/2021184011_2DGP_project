@@ -5,6 +5,7 @@ import enemy
 import game_framework
 import game_world
 import lobby
+import stop
 import item
 import attack
 
@@ -20,7 +21,7 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            game_framework.change_state(lobby)
+            game_framework.push_state(stop)
         else:
             character.handle_events(event)
 
@@ -74,11 +75,21 @@ def collide():
         if character.hit_time <= 0:
                 if character.hero.rect.collide_rect_to_circle(ene.circle):
                     character.hero.hp -= 40
+                    if character.hero.hp <= 0 and character.hero.die == False:
+                        character.hero.die = True
+                        character.hero.image_x = 40
+                        character.hero.image_y = 70
+                        character.hero.frame = 0
+                        character.now_image = character.die_image
                     background.hit = True
                     background.hitcnt = 0
                     character.hit_time = 0.5
         if character.skill_e.circle.collide_circle_to_circle(ene.circle):
                 ene.hp -= attack.skill_e_damage
+    if character.hero.die == True and character.hero.frame >= 4:
+        game_world.clear()
+        game_framework.change_state(lobby)
+
     for it in item.items[:]:
         if character.hero.rect.collide_rect_to_rect(it.rect):
             if character.hero.hp < character.hero_hp:
