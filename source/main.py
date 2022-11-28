@@ -124,11 +124,11 @@ def collide():
                     break
 
     for w in character.skill_w[:]:
-        if w.frame >= 6:
+        if int(w.frame) >= 6:
             character.skill_w.remove(w)
             game_world.remove_object(w)
             continue
-        if w.frame == 0:
+        if int(w.frame) == 0:
             for ene in enemy.enemys:
                 for i in range(3):
                     if w.rect[i].collide_rect_to_circle(ene.circle):

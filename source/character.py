@@ -257,6 +257,9 @@ class Hero:
         self.unit_x = 0
         self.unit_y = 0
         self.die = False
+        self.TIME_PER_ACTION = 0.5
+        self.ACTION_PER_TIME = 1.0 /  self.TIME_PER_ACTION
+        self.FRAMES_PER_ACTION = 3  
         self.rect.update()
 
     def update(self):
@@ -269,8 +272,9 @@ class Hero:
             skill_w_coll_time -= game_framework.frame_time
             skill_r_cool_time -= game_framework.frame_time
             hit_time -= game_framework.frame_time
-            self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
-            self.image = load_image(now_image[self.frame])
+            self.frame = (self.frame +  self.FRAMES_PER_ACTION *  self.ACTION_PER_TIME * game_framework.frame_time) % 3
+            #self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
+            self.image = load_image(now_image[int(self.frame)])
             if(isMove):
                 #self.rect.x += self.unit_x * game_framework.frame_time
                 #self.rect.y += self.unit_y * game_framework.frame_time

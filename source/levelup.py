@@ -50,7 +50,7 @@ def upgrade(n):
             attack.skill_r_damage += attack.skill_r_damage / 20
             attack.skill_r_level += 1
         else:
-            character.skill_r_coll_time = character.skill_r_coll_time - character.skill_r_coll_time / 10
+            character.skill_r_cool_time = character.skill_r_cool_time - character.skill_r_cool_time / 10
         print("r 업글")
         pass
     if n == 5:
@@ -68,7 +68,7 @@ def upgrade(n):
         pass
     if n == 7:
         character.speed_level += 1
-        character.speed += 5
+        character.speed += 1
         print("가속 업글")
         pass
     print(attack.normal_bullet_damage)

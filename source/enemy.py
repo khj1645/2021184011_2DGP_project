@@ -17,11 +17,17 @@ RUN_SPEED_MPS_SLOW_ENEMY_X = 3.0
 RUN_SPEED_MPS_SLOW_ENEMY_Y = 2.4
 RUN_SPEED_PPS_SLOW_ENEMY_X = (RUN_SPEED_MPS_SLOW_ENEMY_X * PIXEL_PER_METER)
 RUN_SPEED_PPS_SLOW_ENEMY_Y = (RUN_SPEED_MPS_SLOW_ENEMY_Y * PIXEL_PER_METER)
+TIME_PER_ACTION_SLOW_ENEMY = 0.5
+ACTION_PER_TIME_SLOW_ENEMY = 1.0 /  TIME_PER_ACTION_SLOW_ENEMY
+FRAMES_PER_ACTION_SLOW_ENEMY = 4
 
 RUN_SPEED_MPS_FAST_ENEMY_X = 4.2
 RUN_SPEED_MPS_FAST_ENEMY_Y = 3.6
 RUN_SPEED_PPS_FAST_ENEMY_X = (RUN_SPEED_MPS_FAST_ENEMY_X * PIXEL_PER_METER)
 RUN_SPEED_PPS_FAST_ENEMY_Y = (RUN_SPEED_MPS_FAST_ENEMY_Y * PIXEL_PER_METER)
+TIME_PER_ACTION_FAST_ENEMY = 0.5
+ACTION_PER_TIME_FAST_ENEMY = 1.0 /  TIME_PER_ACTION_SLOW_ENEMY
+FRAMES_PER_ACTION_FAST_ENEMY = 6
 
 class enemy:
     image = None
@@ -57,20 +63,26 @@ class enemy:
         if self.type == 0:
             self.speed_x = RUN_SPEED_PPS_FAST_ENEMY_X * game_framework.frame_time
             self.speed_y =  RUN_SPEED_PPS_FAST_ENEMY_Y * game_framework.frame_time
+            self.TIME_PER_ACTION = 0.5
+            self.ACTION_PER_TIME = 1.0 /  self.TIME_PER_ACTION
+            self.FRAMES_PER_ACTION = 4
         else:
             self.speed_x = RUN_SPEED_PPS_SLOW_ENEMY_X * game_framework.frame_time
             self.speed_y = RUN_SPEED_PPS_SLOW_ENEMY_Y * game_framework.frame_time
+            self.TIME_PER_ACTION = 0.5
+            self.ACTION_PER_TIME = 1.0 /  self.TIME_PER_ACTION
+            self.FRAMES_PER_ACTION = 6
         self.die = False
     def update(self):
         self.circle.update()
         if self.die:
             if self.frame >=3:
                 return True
-            self.image = load_image(self.image_list[self.frame % self.max_frame])
-            self.frame +=1
+            self.image = load_image(self.image_list[int(self.frame)])
+            self.frame = (self.frame +  self.FRAMES_PER_ACTION *  self.ACTION_PER_TIME * game_framework.frame_time)
         else:
-            self.image = load_image(self.image_list[self.frame % self.max_frame])
-            self.frame +=1
+            self.image = load_image(self.image_list[int(self.frame)])
+            self.frame = (self.frame +  self.FRAMES_PER_ACTION *  self.ACTION_PER_TIME * game_framework.frame_time) % self.max_frame
             if self.circle.x < character.hero.rect.x:
                 self.circle.x += self.speed_x - (character.hero.unit_x * game_framework.frame_time)
             if self.circle.x > character.hero.rect.x:

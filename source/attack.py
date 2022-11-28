@@ -18,6 +18,18 @@ skill_w_level = 1
 skill_e_level = 1
 skill_r_level = 1
 
+TIME_PER_ACTION_E = 0.2
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION_E
+FRAMES_PER_ACTION_E = 3
+
+TIME_PER_ACTION_W = 0.1
+ACTION_PER_TIME_W = 1.0 / TIME_PER_ACTION_W
+FRAMES_PER_ACTION_W = 3
+
+TIME_PER_ACTION_R = 0.3
+ACTION_PER_TIME_R = 1.0 / TIME_PER_ACTION_R
+FRAMES_PER_ACTION_R = 4
+
 class normal_bullet:
     image = None
     def __init__(self):
@@ -86,9 +98,8 @@ class skill_e:
             self.image = load_image(self.image_list[0])
     def update(self):
         self.circle.update()
-        self.frame +=1
-        self.frame %=3
-        self.image = load_image(self.image_list[self.frame])
+        self.frame = (self.frame + FRAMES_PER_ACTION_E * ACTION_PER_TIME * game_framework.frame_time) % 3
+        self.image = load_image(self.image_list[int(self.frame)])
 
        
     def draw(self):
@@ -109,20 +120,20 @@ class skill_w:
             self.rect[i].y = character.hero.rect.y
         self.rect[1].x = 9999 # todo : 업그레이드에 따라 번개 갈래 수 증가
         self.rect[2].x = 9999 
-        self.frame = -1
+        self.frame = 0
         if skill_w.image == None:
             self.image_list = ['ThunderA0.png','ThunderA1.png','ThunderA2.png']
             self.effect_list = ['Explosion7_01.png','Explosion7_02.png','Explosion7_03.png','Explosion7_04.png','Explosion7_05.png','Explosion7_06.png']
             self.image = load_image(self.image_list[0])
             self.effect = load_image(self.effect_list[0])
     def update(self):
-        self.frame += 1
-        self.image = load_image(self.image_list[self.frame % 3])
-        self.effect = load_image(self.effect_list[self.frame % 6])
+        self.frame = (self.frame + FRAMES_PER_ACTION_W * ACTION_PER_TIME_W * game_framework.frame_time)
+        #self.frame += 1
+        self.image = load_image(self.image_list[int(self.frame) % 3])
+        self.effect = load_image(self.effect_list[int(self.frame) % 6])
         for i in range(3):
-            self.rect[i].x += (-1) ** self.frame * (20)
+            self.rect[i].x += (-1) ** int(self.frame) * (5)
             self.rect[i].update()
-        return False
     def draw(self):
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
         for i in range(3):
@@ -156,16 +167,15 @@ class skill_r:
                 self.isuse = False
                 self.isexplo = False
             else:
-                self.frame += 1
-                self.image = load_image(self.explosion_image_list[self.frame])
+                self.frame = (self.frame + FRAMES_PER_ACTION_R * ACTION_PER_TIME_R * game_framework.frame_time)
+                self.image = load_image(self.explosion_image_list[int(self.frame)])
         else:
             self.circle.update()
-            self.frame +=1
-            self.frame %=2
+            self.frame = (self.frame + FRAMES_PER_ACTION_R * ACTION_PER_TIME_R * game_framework.frame_time) % 2
             self.circle.y -= 1800 * game_framework.frame_time + (character.hero.unit_y * game_framework.frame_time)
             self.circle.x -= (character.hero.unit_x * game_framework.frame_time)
             # self.circle.x += 1
-            self.image = load_image(self.image_list[self.frame])
+            self.image = load_image(self.image_list[int(self.frame)])
        
     def draw(self):
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
