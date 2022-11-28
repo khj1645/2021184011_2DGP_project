@@ -1,5 +1,6 @@
 from pico2d import *
 import character
+import game_framework
 import rect
 ix = 600
 iy = 450
@@ -27,8 +28,8 @@ def enter():
 def update():
     global background_pos
     for i in range(0,9):
-        background_pos[i].x -= character.hero.unit_x
-        background_pos[i].y -= character.hero.unit_y
+        background_pos[i].x -= character.hero.unit_x * game_framework.frame_time
+        background_pos[i].y -= character.hero.unit_y * game_framework.frame_time
         background_pos[i].update()
         # backgrounds.clip_draw(0, 0, 500, 500, background_pos[i].x, background_pos[i].y, 2000, 2000)
 

@@ -1,4 +1,5 @@
 from pico2d import *
+import game_framework
 import character
 import rect
 
@@ -18,8 +19,8 @@ class item:
         self.rect.update()
         
     def update(self):
-        self.rect.x += -character.hero.unit_x
-        self.rect.y += -character.hero.unit_y
+        self.rect.x += -(character.hero.unit_x * game_framework.frame_time)
+        self.rect.y += -(character.hero.unit_y * game_framework.frame_time)
         self.rect.update()
         
     def draw(self):

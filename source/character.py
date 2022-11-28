@@ -18,7 +18,10 @@ def setMove(event):
     _R = math.sqrt((height*height) + (weight*weight))
     _S = _R/speed
     hero.unit_y = height / _S
-    hero.unit_x = weight / _S
+    hero.unit_x = weight / _S   # 0.016초에 얼마나 갈지 알 수 있음 - * 60 하면 1초에 몇픽셀 가는지 나옴
+    hero.unit_x = (hero.unit_x * 60)
+    hero.unit_y = (hero.unit_y * 60)
+    
     radian = math.atan2(mouse_y - hero.rect.y, mouse_x - hero.rect.x)
     degree = radian * 180 / math.pi
     if degree < 22.5 and degree > -22.5:
@@ -107,6 +110,8 @@ def setBullet(event, bullet):
     _S = _R/10
     bullet[len(bullet) - 1].unit_y = bheight / _S
     bullet[len(bullet) - 1].unit_x = bweight / _S
+    bullet[len(bullet) - 1].unit_x = ( bullet[len(bullet) - 1].unit_x * 60)
+    bullet[len(bullet) - 1].unit_y = ( bullet[len(bullet) - 1].unit_y * 60)
     if mouse_y - bullet[len(bullet) - 1].circle.y < 0:
         bullet[len(bullet) - 1].unit_y *= -1
     if mouse_x - bullet[len(bullet) - 1].circle.x < 0:
@@ -131,7 +136,7 @@ def enter():
     global hero, running, left_image, right_image, idle_image, skill_q_coll_time, skill_e, skill_w, skill_w_coll_time, skill_r, skill_r_cool_time
     global up_image, down_image, up_right_image, down_right_image,up_left_image, down_left_image, now_image, hit_time, die_image, hero_hp
     global hp_level, int_level, speed_level, speed
-    hp_level, int_level, speed_level, speed = 1, 1, 1, 5
+    hp_level, int_level, speed_level, speed = 1, 1, 1, 3
     running = True
     right_image = ['Unit3Motion_MoveC1.png','Unit3Motion_MoveC2.png','Unit3Motion_MoveC3.png']
     left_image = ['Unit3Motion_MoveCx1.png','Unit3Motion_MoveCx2.png','Unit3Motion_MoveCx3.png']
@@ -219,7 +224,7 @@ def handle_events(event):
 def update():
     global hit_time, now_image, die_image
     if hit_time > 0:
-        hit_time -= 0.016 # + game_framework.frame_time + 
+        hit_time -= game_framework.frame_time
     if hero.hp <= 0 and hero.die == False:
         hero.die = True
         hero.image_x = 40
@@ -260,17 +265,17 @@ class Hero:
             self.image = load_image(now_image[self.frame % 4])
             self.frame = self.frame + 1
         else:
-            skill_q_coll_time -= 0.016 # + game_framework.frame_time + 
-            skill_w_coll_time -= 0.016 # + game_framework.frame_time + 
-            skill_r_cool_time -= 0.016 # + game_framework.frame_time + 
-            hit_time -= 0.016
+            skill_q_coll_time -= game_framework.frame_time
+            skill_w_coll_time -= game_framework.frame_time
+            skill_r_cool_time -= game_framework.frame_time
+            hit_time -= game_framework.frame_time
             self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
             self.image = load_image(now_image[self.frame])
             if(isMove):
-                # self.rect.x += self.unit_x
-                # self.rect.y += self.unit_y
+                #self.rect.x += self.unit_x * game_framework.frame_time
+                #self.rect.y += self.unit_y * game_framework.frame_time
                 #pico2d.draw_rectangle(hero.rect.left,hero.rect.top, hero.rect.right, hero.rect.bottom )
-                movesheep += self.unit_x
+                movesheep += self.unit_x * game_framework.frame_time
                 self.rect.update()
                 arrival()
 

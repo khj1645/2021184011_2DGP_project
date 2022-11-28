@@ -62,7 +62,7 @@ def update():
 
     enemy.make_enemy()
     enemy.check_enemy()
-    delay(0.016)
+    #delay(0.016)
 
 def pause():
     pass
@@ -74,7 +74,7 @@ def collide():
     for ene in enemy.enemys:
         if character.hit_time <= 0:
                 if character.hero.rect.collide_rect_to_circle(ene.circle):
-                    character.hero.hp -= 40
+                    #character.hero.hp -= 40
                     if character.hero.hp <= 0 and character.hero.die == False:
                         character.hero.die = True
                         character.hero.image_x = 40

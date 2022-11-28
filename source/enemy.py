@@ -11,6 +11,18 @@ enemys = None
 maketime = None
 make_limit = None
 make_flag = None
+
+PIXEL_PER_METER = (10.0 / 0.2) # 10 pixel 30 cm
+RUN_SPEED_MPS_SLOW_ENEMY_X = 3.0
+RUN_SPEED_MPS_SLOW_ENEMY_Y = 2.4
+RUN_SPEED_PPS_SLOW_ENEMY_X = (RUN_SPEED_MPS_SLOW_ENEMY_X * PIXEL_PER_METER)
+RUN_SPEED_PPS_SLOW_ENEMY_Y = (RUN_SPEED_MPS_SLOW_ENEMY_Y * PIXEL_PER_METER)
+
+RUN_SPEED_MPS_FAST_ENEMY_X = 4.2
+RUN_SPEED_MPS_FAST_ENEMY_Y = 3.6
+RUN_SPEED_PPS_FAST_ENEMY_X = (RUN_SPEED_MPS_FAST_ENEMY_X * PIXEL_PER_METER)
+RUN_SPEED_PPS_FAST_ENEMY_Y = (RUN_SPEED_MPS_FAST_ENEMY_Y * PIXEL_PER_METER)
+
 class enemy:
     image = None
     radius = [40, 60, 60 ]
@@ -43,11 +55,11 @@ class enemy:
         self.frame = 0
         self.max_frame = enemy.frame[self.type]
         if self.type == 0:
-            self.speed_x = 3.5
-            self.speed_y = 3
+            self.speed_x = RUN_SPEED_PPS_FAST_ENEMY_X * game_framework.frame_time
+            self.speed_y =  RUN_SPEED_PPS_FAST_ENEMY_Y * game_framework.frame_time
         else:
-            self.speed_x = 2.5
-            self.speed_y = 2
+            self.speed_x = RUN_SPEED_PPS_SLOW_ENEMY_X * game_framework.frame_time
+            self.speed_y = RUN_SPEED_PPS_SLOW_ENEMY_Y * game_framework.frame_time
         self.die = False
     def update(self):
         self.circle.update()
@@ -60,31 +72,31 @@ class enemy:
             self.image = load_image(self.image_list[self.frame % self.max_frame])
             self.frame +=1
             if self.circle.x < character.hero.rect.x:
-                self.circle.x += self.speed_x - character.hero.unit_x
+                self.circle.x += self.speed_x - (character.hero.unit_x * game_framework.frame_time)
             if self.circle.x > character.hero.rect.x:
-                self.circle.x += -1 * self.speed_x - character.hero.unit_x
+                self.circle.x += -1 * self.speed_x - (character.hero.unit_x * game_framework.frame_time)
             if self.circle.y < character.hero.rect.y:
-                self.circle.y += self.speed_y - character.hero.unit_y
+                self.circle.y += self.speed_y - (character.hero.unit_y * game_framework.frame_time)
             if self.circle.y > character.hero.rect.y:
-                self.circle.y += -1 * self.speed_y - character.hero.unit_y
-            for en in enemys:
-                if en != self and not en.die and self.circle.collide_circle_to_circle(en.circle):
-                    if self.circle.x > en.circle.x: Iw = en.circle.right - self.circle.left
-                    else: Iw = self.circle.right - en.circle.left
-                    if self.circle.y > en.circle.y: Ih = en.circle.top - self.circle.bottom
-                    else: 
-                        Ih = self.circle.top - en.circle.bottom
-                    if Iw > Ih:
-                        if self.circle.y > en.circle.y:
-                            self.circle.y += Ih
-                        else:
-                            self.circle.y -= Ih
-                    else:
-                        if self.circle.x > en.circle.x:
-                            self.circle.x += Iw
-                        else:
-                            self.circle.x -= Iw
-                    self.circle.update()
+                self.circle.y += -1 * self.speed_y - (character.hero.unit_y * game_framework.frame_time)
+            # for en in enemys:
+            #     if en != self and not en.die and self.circle.collide_circle_to_circle(en.circle):
+            #         if self.circle.x > en.circle.x: Iw = en.circle.right - self.circle.left
+            #         else: Iw = self.circle.right - en.circle.left
+            #         if self.circle.y > en.circle.y: Ih = en.circle.top - self.circle.bottom
+            #         else: 
+            #             Ih = self.circle.top - en.circle.bottom
+            #         if Iw > Ih:
+            #             if self.circle.y > en.circle.y:
+            #                 self.circle.y += Ih
+            #             else:
+            #                 self.circle.y -= Ih
+            #         else:
+            #             if self.circle.x > en.circle.x:
+            #                 self.circle.x += Iw
+            #             else:
+            #                 self.circle.x -= Iw
+            #         self.circle.update()
                    #  break
         return False
     def draw(self):
@@ -108,7 +120,7 @@ def draw():
 def make_enemy():
     global maketime, make_limit, make_flag
     
-    maketime -= 0.016 # + game_framework.frame_time + 
+    maketime -= game_framework.frame_time
     if(maketime <= 0):
         maketime = make_limit
         enemys.append(enemy())

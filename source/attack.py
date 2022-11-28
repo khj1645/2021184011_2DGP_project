@@ -1,6 +1,7 @@
 from random import randint
 from pico2d import *
 import character
+import game_framework
 import rect
 import circle
 import enemy
@@ -33,8 +34,8 @@ class normal_bullet:
         if normal_bullet.image == None:
             self.image = load_image('Bullet5_01.png')
     def update(self):
-        self.circle.x += self.unit_x - character.hero.unit_x
-        self.circle.y += self.unit_y - character.hero.unit_y
+        self.circle.x += (self.unit_x * game_framework.frame_time) - (character.hero.unit_x * game_framework.frame_time)
+        self.circle.y += (self.unit_y * game_framework.frame_time) - (character.hero.unit_y * game_framework.frame_time)
         self.circle.update()
        # self.rect.update()
     def draw(self):
@@ -59,8 +60,8 @@ class skill_q:
         if skill_q.image == None:
             self.image = load_image(self.image_list[0])
     def update(self):
-        self.circle.x += self.unit_x - character.hero.unit_x
-        self.circle.y += self.unit_y - character.hero.unit_y
+        self.circle.x += (self.unit_x * game_framework.frame_time) - (character.hero.unit_x * game_framework.frame_time)
+        self.circle.y += (self.unit_y * game_framework.frame_time) - (character.hero.unit_y * game_framework.frame_time)
         self.circle.update()
         
         self.frame +=1
@@ -161,8 +162,8 @@ class skill_r:
             self.circle.update()
             self.frame +=1
             self.frame %=2
-            self.circle.y -= 30 + character.hero.unit_y
-            self.circle.x -= +character.hero.unit_x
+            self.circle.y -= 1800 * game_framework.frame_time + (character.hero.unit_y * game_framework.frame_time)
+            self.circle.x -= (character.hero.unit_x * game_framework.frame_time)
             # self.circle.x += 1
             self.image = load_image(self.image_list[self.frame])
        
