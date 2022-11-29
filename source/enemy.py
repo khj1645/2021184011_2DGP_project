@@ -49,9 +49,9 @@ class enemy:
                             'Unit22Motion_MoveC.png','Unit22Motion_MoveD.png']
         self.image = load_image(self.image_list[0])
         self.circle = circle.circle()
-        self.circle.x = random.randint(-100,1300)
-        self.circle.y = random.randint(0,900)
-        if self.circle.y >= 450:
+        self.circle.x = random.randint(int(character.hero.rect.x -700),int(character.hero.rect.x + 700))
+        self.circle.y = random.randint(int(character.hero.rect.y - 450),int(character.hero.rect.y + 450))
+        if self.circle.y >= character.hero.rect.y:
             self.circle.y += random.randint(1000,1500)
         else:
             self.circle.y -= random.randint(1000,1500)
@@ -62,7 +62,7 @@ class enemy:
         self.max_frame = enemy.frame[self.type]
         if self.type == 0:
             self.speed_x = RUN_SPEED_PPS_FAST_ENEMY_X * game_framework.frame_time
-            self.speed_y =  RUN_SPEED_PPS_FAST_ENEMY_Y * game_framework.frame_time
+            self.speed_y = RUN_SPEED_PPS_FAST_ENEMY_Y * game_framework.frame_time
             self.TIME_PER_ACTION = 0.5
             self.ACTION_PER_TIME = 1.0 /  self.TIME_PER_ACTION
             self.FRAMES_PER_ACTION = 4
@@ -81,16 +81,28 @@ class enemy:
             self.image = load_image(self.image_list[int(self.frame)])
             self.frame = (self.frame +  self.FRAMES_PER_ACTION *  self.ACTION_PER_TIME * game_framework.frame_time)
         else:
+            if self.type == 0:
+                self.speed_x = RUN_SPEED_PPS_FAST_ENEMY_X * game_framework.frame_time
+                self.speed_y = RUN_SPEED_PPS_FAST_ENEMY_Y * game_framework.frame_time
+                self.TIME_PER_ACTION = 0.5
+                self.ACTION_PER_TIME = 1.0 /  self.TIME_PER_ACTION
+                self.FRAMES_PER_ACTION = 4
+            else:
+                self.speed_x = RUN_SPEED_PPS_SLOW_ENEMY_X * game_framework.frame_time
+                self.speed_y = RUN_SPEED_PPS_SLOW_ENEMY_Y * game_framework.frame_time
+                self.TIME_PER_ACTION = 0.5
+                self.ACTION_PER_TIME = 1.0 /  self.TIME_PER_ACTION
+                self.FRAMES_PER_ACTION = 6
             self.image = load_image(self.image_list[int(self.frame)])
             self.frame = (self.frame +  self.FRAMES_PER_ACTION *  self.ACTION_PER_TIME * game_framework.frame_time) % self.max_frame
             if self.circle.x < character.hero.rect.x:
-                self.circle.x += self.speed_x - (character.hero.unit_x * game_framework.frame_time)
+                self.circle.x += self.speed_x# - (character.hero.unit_x * game_framework.frame_time)
             if self.circle.x > character.hero.rect.x:
-                self.circle.x += -1 * self.speed_x - (character.hero.unit_x * game_framework.frame_time)
+                self.circle.x += -1 * self.speed_x #- (character.hero.unit_x * game_framework.frame_time)
             if self.circle.y < character.hero.rect.y:
-                self.circle.y += self.speed_y - (character.hero.unit_y * game_framework.frame_time)
+                self.circle.y += self.speed_y #- (character.hero.unit_y * game_framework.frame_time)
             if self.circle.y > character.hero.rect.y:
-                self.circle.y += -1 * self.speed_y - (character.hero.unit_y * game_framework.frame_time)
+                self.circle.y += -1 * self.speed_y #- (character.hero.unit_y * game_framework.frame_time)
             # for en in enemys:
             #     if en != self and not en.die and self.circle.collide_circle_to_circle(en.circle):
             #         if self.circle.x > en.circle.x: Iw = en.circle.right - self.circle.left
@@ -112,10 +124,12 @@ class enemy:
                    #  break
         return False
     def draw(self):
+        sx = self.circle.x - (character.hero.rect.x - 600)
+        sy = self.circle.y - (character.hero.rect.y - 450)
         if self.die:
-            self.image.clip_draw(0, 0, 180, 180, self.circle.x, self.circle.y, self.circle.r * 2, self.circle.r * 2)
+            self.image.clip_draw(0, 0, 180, 180, sx, sy, self.circle.r * 2, self.circle.r * 2)
         else:  
-            self.image.clip_draw(0, 0, enemy.image_x[self.type], enemy.image_y[self.type], self.circle.x, self.circle.y, self.circle.r * 2, self.circle.r * 2)
+            self.image.clip_draw(0, 0, enemy.image_x[self.type], enemy.image_y[self.type], sx, sy, self.circle.r * 2, self.circle.r * 2)
 
 def enter():
     global enemys, maketime, make_limit, make_flag
@@ -150,6 +164,11 @@ def check_enemy():
     global enemys
     for enem in enemys[:]:
         if(enem.hp <= 0 and enem.die == False):
+            character.hero.exp += 10
+            if character.hero.exp >=100:
+                game_framework.push_state(levelup)
+                character.hero.lv += 1
+                character.hero.exp = 100 - character.hero.exp
             enem.die = True
             enem.speed_x = enem.speed_y = enem.frame = 0
             enem.max_frame = 3
@@ -161,8 +180,3 @@ def check_enemy():
         if enem.die and enem.frame >=3:
             enemys.remove(enem)
             game_world.remove_object(enem)
-            character.hero.exp += 10
-            if character.hero.exp >=100:
-                game_framework.push_state(levelup)
-                character.hero.lv += 1
-                character.hero.exp = 100 - character.hero.exp

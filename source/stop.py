@@ -41,10 +41,8 @@ def draw():
     clear_canvas()
     # main.draw()
     back = load_image('Sheet_AbilityCh.png')
-    background.draw()
-    enemy.draw()
-    item.draw()
-    character.draw()
+    for game_object in game_world.all_objects():
+        game_object.draw()
     back.clip_draw(0,0,220,300,600, 450, 1000, 800)
     big_font.draw(500, 870, f'일시정지', (0, 0, 0))
     mid_font.draw(500, 770, f'Level : {character.hero.lv}', (255, 255, 255))

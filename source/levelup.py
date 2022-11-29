@@ -1,11 +1,9 @@
 from pico2d import *
 import character
-import enemy
-import background
 import game_framework
-import item
 import random
 import attack
+import game_world
 # 기본 공격, 스킬 4개, 이속, 체력, 공격력, 쿨타임
 image_list = ['Ability1Portrait.png', 'Ability2Portrait.png', 'Ability7Portrait.png','Ability8Portrait.png',
               'Ability10Portrait.png','Ability31Portrait.png','Ability33Portrait.png','Ability34Portrait.png']
@@ -125,11 +123,8 @@ def exit():
 def draw():
     global image, big_font, mid_font, small_font, index_list
     clear_canvas()
-    # main.draw()
-    background.draw()
-    enemy.draw()
-    item.draw()
-    character.draw()
+    for game_object in game_world.all_objects():
+        game_object.draw()
     big_font.draw(500, 850, f'Level : {character.hero.lv}', (0, 255, 0))
     back = load_image('Sheet_AbilityCh.png')
     for i in range(3):

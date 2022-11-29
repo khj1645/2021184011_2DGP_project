@@ -14,6 +14,7 @@ font = None
 play_time = None
 minute = None
 second = None
+back = None
 def handle_events():
     global running
     events = get_events()
@@ -27,12 +28,13 @@ def handle_events():
 
 
 def enter():
-    global running, font, minute, second
+    global running, font, minute, second, back
     running = True
     font = load_font('JejuHallasan.ttf', 32)
     minute, second = 0, 0
     character.enter()
-    background.enter()
+    back = background.InfiniteBackground()
+    game_world.add_object(back, 0)
     enemy.enter()
     item.enter()
 
@@ -42,11 +44,12 @@ def exit():
 def draw():
     global minute, second
     clear_canvas()
-    background.draw()
+    #background.draw()
     for game_object in game_world.all_objects():
         game_object.draw()
 
     font.draw(568, 850, f'{minute} : {second}', (0, 0, 0))
+    font.draw(600, 550, f'{int(character.hero.rect.x)} : {int(character.hero.rect.y)}', (0, 0, 0))
     update_canvas()
 
 def update():
@@ -54,7 +57,7 @@ def update():
     play_time = get_time() - lobby.play_time
     minute = int(play_time // 60)
     second = int(play_time % 60)
-    background.update()
+   # background.update()
     for game_object in game_world.all_objects():
         game_object.update()
 
@@ -81,9 +84,9 @@ def collide():
                         character.hero.image_y = 70
                         character.hero.frame = 0
                         character.now_image = character.die_image
-                    background.hit = True
-                    background.hitcnt = 0
-                    character.hit_time = 0.5
+                    back.hit = True
+                    back.hitcnt = 0
+                    character.hit_time = 1.0
         if character.skill_e.circle.collide_circle_to_circle(ene.circle):
                 ene.hp -= attack.skill_e_damage
     if character.hero.die == True and character.hero.frame >= 4:
@@ -100,7 +103,10 @@ def collide():
             game_world.remove_object(it)
             
     for normal in character.normal_bullet[:]:
-        if(normal.circle.x > character.TUK_WIDTH or normal.circle.x < 0 or normal.circle.y > character.TUK_HEIGHT or normal.circle.y < 0):
+        if(normal.circle.x > character.hero.rect.x + 600
+         or normal.circle.x < character.hero.rect.x - 600
+          or normal.circle.y > character.hero.rect.y + 450
+           or normal.circle.y < character.hero.rect.y - 450):
             character.normal_bullet.remove(normal)
             game_world.remove_object(normal) 
         else:
@@ -112,7 +118,10 @@ def collide():
                     break
 
     for q in character.skill_q[:]:
-        if(q.circle.x > character.TUK_WIDTH or q.circle.x < 0 or q.circle.y > character.TUK_HEIGHT or q.circle.y < 0):
+        if(q.circle.x > character.hero.rect.x + 600
+         or q.circle.x < character.hero.rect.x - 600
+          or q.circle.y > character.hero.rect.y + 450
+           or q.circle.y < character.hero.rect.y - 450):
             character.skill_q.remove(q)
             game_world.remove_object(q)
         else:

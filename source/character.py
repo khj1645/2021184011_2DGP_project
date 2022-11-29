@@ -5,6 +5,7 @@ import math
 import lobby
 import game_framework
 import game_world
+import main
 import enemy
 import item
 import background
@@ -13,8 +14,8 @@ def setMove(event):
     global mouse_x, mouse_y, isMove, hero,  height, weight, movesheep, now_image, speed
     movesheep = 0
     mouse_x, mouse_y = event.x, TUK_HEIGHT - 1 - event.y
-    height = abs(mouse_y - hero.rect.y)
-    weight = abs(mouse_x - hero.rect.x)
+    height = abs(mouse_y - 450)
+    weight = abs(mouse_x - 600)
     _R = math.sqrt((height*height) + (weight*weight))
     _S = _R/speed
     hero.unit_y = height / _S
@@ -22,7 +23,7 @@ def setMove(event):
     hero.unit_x = (hero.unit_x * 60)
     hero.unit_y = (hero.unit_y * 60)
     
-    radian = math.atan2(mouse_y - hero.rect.y, mouse_x - hero.rect.x)
+    radian = math.atan2(mouse_y - 450, mouse_x - 600)
     degree = radian * 180 / math.pi
     if degree < 22.5 and degree > -22.5:
         now_image = right_image
@@ -94,9 +95,9 @@ def setMove(event):
         # hero.rect.rx = hero.image_x / 2
         # hero.rect.ry = hero.image_y / 2
         hero.rect.update()
-    if mouse_y - hero.rect.y < 0:
+    if mouse_y - 450 < 0:
         hero.unit_y *= -1
-    if mouse_x - hero.rect.x < 0:
+    if mouse_x - 600 < 0:
         hero.unit_x *= -1
 
 
@@ -104,19 +105,19 @@ def setMove(event):
 def setBullet(event, bullet):
     global mouse_x, mouse_y,  bheight, bweight
     mouse_x, mouse_y = event.x, TUK_HEIGHT - 1 - event.y
-    bheight = abs(mouse_y - bullet[len(bullet) - 1].circle.y)
-    bweight = abs(mouse_x - bullet[len(bullet) - 1].circle.x)
+    bheight = abs(mouse_y - (bullet[len(bullet) - 1].circle.y - (hero.rect.y - 450)))
+    bweight = abs(mouse_x - (bullet[len(bullet) - 1].circle.x - (hero.rect.x - 600)))
     _R = math.sqrt((bheight*bheight) + (bweight*bweight))
     _S = _R/10
     bullet[len(bullet) - 1].unit_y = bheight / _S
     bullet[len(bullet) - 1].unit_x = bweight / _S
     bullet[len(bullet) - 1].unit_x = ( bullet[len(bullet) - 1].unit_x * 60)
     bullet[len(bullet) - 1].unit_y = ( bullet[len(bullet) - 1].unit_y * 60)
-    if mouse_y - bullet[len(bullet) - 1].circle.y < 0:
+    if mouse_y - (bullet[len(bullet) - 1].circle.y - (hero.rect.y - 450)) < 0:
         bullet[len(bullet) - 1].unit_y *= -1
-    if mouse_x - bullet[len(bullet) - 1].circle.x < 0:
+    if mouse_x - (bullet[len(bullet) - 1].circle.x - (hero.rect.x - 600)) < 0:
         bullet[len(bullet) - 1].unit_x *= -1
-    bullet[len(bullet) - 1].rad = math.atan2(mouse_y - bullet[len(bullet) - 1].circle.y, mouse_x - bullet[len(bullet) - 1].circle.x)
+    bullet[len(bullet) - 1].rad = math.atan2(mouse_y - (bullet[len(bullet) - 1].circle.y - (hero.rect.y - 450)), mouse_x - (bullet[len(bullet) - 1].circle.x- (hero.rect.x - 600)))
 
     
 def arrival():
@@ -203,7 +204,8 @@ def handle_events(event):
                 x, y = ctypes.c_int(0), ctypes.c_int(0)
                 buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
                 event.x = x.value
-                skill_w[len(skill_w) - 1].rect[0].x = event.x
+                skill_w[len(skill_w) - 1].rect[0].x = event.x + (hero.rect.x - 600)
+                skill_w[len(skill_w) - 1].sx = skill_w[len(skill_w) - 1].rect[0].x  - (hero.rect.x - 600)
 
     elif event.key == SDLK_r:
             if(skill_r_cool_time <= 0):
@@ -214,9 +216,9 @@ def handle_events(event):
                 buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
                 event.x = x.value
                 event.y = y.value
-                skill_r_temp.move_rate_y = TUK_HEIGHT - 1 - event.y
-                skill_r_temp.circle.x = x.value
-                skill_r_temp.circle.y = 1350
+                skill_r_temp.move_rate_y = (TUK_HEIGHT - 1 - event.y) + (hero.rect.y - 450)
+                skill_r_temp.circle.x = x.value + (hero.rect.x - 600)
+                skill_r_temp.circle.y = hero.rect.y + 900
                 skill_r_temp.isuse = True
                 skill_r.append(skill_r_temp)
                 game_world.add_object(skill_r_temp,1)
@@ -256,6 +258,7 @@ class Hero:
         self.rect.ry = self.image_y / 2
         self.unit_x = 0
         self.unit_y = 0
+        self.sx, self.sy = 0, 0
         self.die = False
         self.TIME_PER_ACTION = 0.5
         self.ACTION_PER_TIME = 1.0 /  self.TIME_PER_ACTION
@@ -276,8 +279,8 @@ class Hero:
             #self.frame = (self.frame + 1) % 3 # todo 애니메이션 속도 조절
             self.image = load_image(now_image[int(self.frame)])
             if(isMove):
-                #self.rect.x += self.unit_x * game_framework.frame_time
-                #self.rect.y += self.unit_y * game_framework.frame_time
+                self.rect.x += self.unit_x * game_framework.frame_time
+                self.rect.y += self.unit_y * game_framework.frame_time
                 #pico2d.draw_rectangle(hero.rect.left,hero.rect.top, hero.rect.right, hero.rect.bottom )
                 movesheep += self.unit_x * game_framework.frame_time
                 self.rect.update()
@@ -287,21 +290,21 @@ class Hero:
         return False
     def draw(self):
         
-        for i in range(len(normal_bullet)):
-            normal_bullet[i].draw()
-        for i in range(len(skill_q)):
-            skill_q[i].draw()
-        for i in range(len(skill_w)):
-            skill_w[i].draw()
-        skill_e.draw()
-        for a in skill_r:
-            a.draw()
+        # for i in range(len(normal_bullet)):
+        #     normal_bullet[i].draw()
+        # for i in range(len(skill_q)):
+        #     skill_q[i].draw()
+        # for i in range(len(skill_w)):
+        #     skill_w[i].draw()
+        # skill_e.draw()
+        # for a in skill_r:
+        #     a.draw()
         if self.die:
-            self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
+            self.image.clip_draw(0, 0, self.image_x, self.image_y, 600, 450, 50, 80)
         else:    
-            self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, 50, 80)
+            self.image.clip_draw(0, 0, self.image_x, self.image_y, 600, 450, 50, 80)
         self.exp_image.clip_draw(0, 0, 465,48, TUK_WIDTH / 2, TUK_HEIGHT, TUK_WIDTH * (self.exp / 100), 20)
-        self.hp_image.clip_draw(0, 0, 465,48, self.rect.x, self.rect.y + 50, self.hp, 10)
+        self.hp_image.clip_draw(0, 0, 465,48, 600, 500, self.hp, 10)
 
 
 normal_bullet = []
