@@ -125,6 +125,7 @@ class skill_w:
         self.rect[0].y = character.hero.rect.y
         self.sx = 0
         self.frame = 0
+        
         if skill_w.image == None:
             self.image_list = ['ThunderA0.png','ThunderA1.png','ThunderA2.png']
             self.effect_list = ['Explosion7_01.png','Explosion7_02.png','Explosion7_03.png','Explosion7_04.png','Explosion7_05.png','Explosion7_06.png']
@@ -143,6 +144,7 @@ class skill_w:
         #self.image.rotate_draw(self.rad,self.circle.x,self.circle.y,128,64)
         self.image.clip_draw(0, 0, self.image_x, self.image_y, self.sx, sy, 40, 900)
         self.effect.clip_draw(0, 0, 181, 175, self.sx, sy - 425, 100, 100)
+        # pico2d.draw_rectangle( self.rect[0].left- (character.hero.rect.x - 600),self.rect[0].top- (character.hero.rect.y - 450),self.rect[0].right- (character.hero.rect.x - 600), self.rect[0].bottom- (character.hero.rect.y - 450))
 
 class skill_r:
     image = None

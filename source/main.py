@@ -139,8 +139,7 @@ def collide():
             continue
         if int(w.frame) == 0:
             for ene in enemy.enemys:
-                for i in range(3):
-                    if w.rect[i].collide_rect_to_circle(ene.circle):
+                if w.rect[0].collide_rect_to_circle(ene.circle):
                         ene.hp -= attack.skill_w_damage
 
     for a in character.skill_r[:]:

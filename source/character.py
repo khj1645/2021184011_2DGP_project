@@ -306,7 +306,6 @@ class Hero:
         self.exp_image.clip_draw(0, 0, 465,48, TUK_WIDTH / 2, TUK_HEIGHT, TUK_WIDTH * (self.exp / 100), 20)
         self.hp_image.clip_draw(0, 0, 465,48, 600, 500, self.hp, 10)
 
-
 normal_bullet = []
 skill_q= []
 skill_w= []
