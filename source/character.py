@@ -185,6 +185,7 @@ def handle_events(event):
             normal_bullet.append(attack.normal_bullet())
             game_world.add_object(normal_bullet[len(normal_bullet) - 1],1)
             setBullet(event, normal_bullet)
+            attack.normal_bullet.sound.play()
     elif event.key == SDLK_q:
             if(skill_q_coll_time <= 0):
                 skill_q_coll_time = 0.5
@@ -196,6 +197,7 @@ def handle_events(event):
                 event.y = y.value
                 setBullet(event,skill_q)
                 print(get_time())
+                attack.skill_q.sound.play()
     elif event.key == SDLK_w:
             if(skill_w_coll_time <= 0):
                 skill_w_coll_time = 0.5
@@ -206,6 +208,7 @@ def handle_events(event):
                 event.x = x.value
                 skill_w[len(skill_w) - 1].rect[0].x = event.x + (hero.rect.x - 600)
                 skill_w[len(skill_w) - 1].sx = skill_w[len(skill_w) - 1].rect[0].x  - (hero.rect.x - 600)
+                attack.skill_w.sound.play()
 
     elif event.key == SDLK_r:
             if(skill_r_cool_time <= 0):
@@ -239,7 +242,7 @@ def update():
 def draw():
     hero.draw()
 class Hero:
-    
+    sound = None
     def __init__(self):
         self.image = load_image('Unit3Motion_Nomal1.png')
         self.hp_image = load_image('Sheet_UIBar03.png')
@@ -264,6 +267,10 @@ class Hero:
         self.ACTION_PER_TIME = 1.0 /  self.TIME_PER_ACTION
         self.FRAMES_PER_ACTION = 3  
         self.rect.update()
+        if Hero.sound is None:
+            Hero.sound = load_wav('AudioClip\\Sound_Blood2.wav')
+            Hero.sound.set_volume(16)
+
 
     def update(self):
         global movesheep, skill_q_coll_time, skill_w_coll_time, hit_time, skill_r_cool_time, hero_hp

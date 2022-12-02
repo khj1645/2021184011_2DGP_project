@@ -78,6 +78,7 @@ def collide():
         if character.hit_time <= 0:
                 if character.hero.rect.collide_rect_to_circle(ene.circle):
                     #character.hero.hp -= 40
+                    character.Hero.sound.play()
                     if character.hero.hp <= 0 and character.hero.die == False:
                         character.hero.die = True
                         character.hero.image_x = 40
@@ -143,13 +144,14 @@ def collide():
                         ene.hp -= attack.skill_w_damage
 
     for a in character.skill_r[:]:
-        if a.move_rate_y >= a.circle.y and not a.isexplo:
+        if a.move_rate_y >= a.circle.y and a.isexplo == False:
+            attack.skill_r.explosion_sound.play()
             a.circle.r = 300
             for ene in enemy.enemys:
                 if a.circle.collide_circle_to_circle(ene.circle):
                     ene.hp -= attack.skill_r_damage
-                a.frame = -1
-                a.isexplo = True
+            a.frame = -1
+            a.isexplo = True
         if not a.isuse:
             character.skill_r.remove(a)
             game_world.remove_object(a)
