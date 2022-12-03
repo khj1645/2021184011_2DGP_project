@@ -1,6 +1,7 @@
 import pico2d
 import game_framework
 import lobby
+import dead
 import os
 
 os.chdir('Sprite_use')

@@ -13,8 +13,8 @@ class InfiniteBackground:
         self.h = self.image.h
         self.hit = False
         self.hitcnt = 0
-        self.bgm = load_music('AudioClip\\Sound_BGM10.wav')
-        self.bgm.set_volume(20)
+        self.bgm = load_music('AudioClip\\Sound_BGM4.wav')
+        self.bgm.set_volume(15)
         self.bgm.repeat_play()
 
     def draw(self):

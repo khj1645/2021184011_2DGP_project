@@ -34,6 +34,10 @@ def enter():
     pass
 
 def exit():
+    global big_font, mid_font, small_font
+    del big_font
+    del mid_font
+    del small_font
     pass
 
 def draw():
@@ -43,7 +47,7 @@ def draw():
     back = load_image('Sheet_AbilityCh.png')
     for game_object in game_world.all_objects():
         game_object.draw()
-    back.clip_draw(0,0,220,300,600, 450, 1000, 800)
+    back.clip_draw(0,0,220,300,600, 450, 600, 800)
     big_font.draw(500, 870, f'일시정지', (0, 0, 0))
     mid_font.draw(500, 770, f'Level : {character.hero.lv}', (255, 255, 255))
     mid_font.draw(500, 670, f'체력 : {character.hero.hp}/{character.hero_hp}', (255, 255, 255))

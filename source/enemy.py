@@ -103,25 +103,25 @@ class enemy:
                 self.circle.y += self.speed_y #- (character.hero.unit_y * game_framework.frame_time)
             if self.circle.y > character.hero.rect.y:
                 self.circle.y += -1 * self.speed_y #- (character.hero.unit_y * game_framework.frame_time)
-            # for en in enemys:
-            #     if en != self and not en.die and self.circle.collide_circle_to_circle(en.circle):
-            #         if self.circle.x > en.circle.x: Iw = en.circle.right - self.circle.left
-            #         else: Iw = self.circle.right - en.circle.left
-            #         if self.circle.y > en.circle.y: Ih = en.circle.top - self.circle.bottom
-            #         else: 
-            #             Ih = self.circle.top - en.circle.bottom
-            #         if Iw > Ih:
-            #             if self.circle.y > en.circle.y:
-            #                 self.circle.y += Ih
-            #             else:
-            #                 self.circle.y -= Ih
-            #         else:
-            #             if self.circle.x > en.circle.x:
-            #                 self.circle.x += Iw
-            #             else:
-            #                 self.circle.x -= Iw
-            #         self.circle.update()
-                   #  break
+            for en in enemys:
+                if en != self and not en.die and self.circle.collide_circle_to_circle(en.circle):
+                    if self.circle.x > en.circle.x: Iw = en.circle.right - self.circle.left
+                    else: Iw = self.circle.right - en.circle.left
+                    if self.circle.y > en.circle.y: Ih = en.circle.top - self.circle.bottom
+                    else: 
+                        Ih = self.circle.top - en.circle.bottom
+                    if Iw > Ih:
+                        if self.circle.y > en.circle.y:
+                            self.circle.y += Ih
+                        else:
+                            self.circle.y -= Ih
+                    else:
+                        if self.circle.x > en.circle.x:
+                            self.circle.x += Iw
+                        else:
+                            self.circle.x -= Iw
+                    self.circle.update()
+                    break
         return False
     def draw(self):
         sx = self.circle.x - (character.hero.rect.x - 600)

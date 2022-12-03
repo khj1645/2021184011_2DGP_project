@@ -5,10 +5,7 @@ import math
 import lobby
 import game_framework
 import game_world
-import main
-import enemy
-import item
-import background
+
 
 def setMove(event):
     global mouse_x, mouse_y, isMove, hero,  height, weight, movesheep, now_image, speed
@@ -170,14 +167,15 @@ def enter():
     hit_time = 0
 
 def handle_events(event):
-    global running, click, skill_q_coll_time, skill_w, skill_w_coll_time, skill_r_cool_time, skill_r
+    global running, click, skill_q_coll_time, skill_w, skill_w_coll_time, skill_r_cool_time, skill_r, hero
     if event.type == SDL_QUIT:
             running = False
     elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_RIGHT:
-            click = True
-            setMove(event)
+            if not hero.die:
+                click = True
+                setMove(event)
     elif event.type == SDL_MOUSEMOTION and click == True:
-            if(click):
+            if(click and not hero.die):
                 setMove(event)
     elif event.type == SDL_MOUSEBUTTONUP and event.button == SDL_BUTTON_RIGHT:
             click = False
@@ -275,8 +273,8 @@ class Hero:
     def update(self):
         global movesheep, skill_q_coll_time, skill_w_coll_time, hit_time, skill_r_cool_time, hero_hp
         if self.die:
-            self.image = load_image(now_image[self.frame % 4])
-            self.frame = self.frame + 1
+            self.image = load_image(now_image[int(self.frame) % 4])
+            self.frame = (self.frame +  self.FRAMES_PER_ACTION *  self.ACTION_PER_TIME * game_framework.frame_time)
         else:
             skill_q_coll_time -= game_framework.frame_time
             skill_w_coll_time -= game_framework.frame_time

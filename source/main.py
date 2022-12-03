@@ -8,6 +8,7 @@ import lobby
 import stop
 import item
 import attack
+import dead
 
 running = None
 font = None
@@ -77,7 +78,7 @@ def collide():
     for ene in enemy.enemys:
         if character.hit_time <= 0:
                 if character.hero.rect.collide_rect_to_circle(ene.circle):
-                    #character.hero.hp -= 40
+                    character.hero.hp -= 40
                     character.Hero.sound.play()
                     if character.hero.hp <= 0 and character.hero.die == False:
                         character.hero.die = True
@@ -91,8 +92,8 @@ def collide():
         if character.skill_e.circle.collide_circle_to_circle(ene.circle):
                 ene.hp -= attack.skill_e_damage
     if character.hero.die == True and character.hero.frame >= 4:
-        game_world.clear()
-        game_framework.change_state(lobby)
+        back.bgm.stop()
+        game_framework.change_state(dead)
 
     for it in item.items[:]:
         if character.hero.rect.collide_rect_to_rect(it.rect):
