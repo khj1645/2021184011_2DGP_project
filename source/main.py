@@ -16,6 +16,7 @@ play_time = None
 minute = None
 second = None
 back = None
+pause_image = None
 def handle_events():
     global running
     events = get_events()
@@ -29,9 +30,10 @@ def handle_events():
 
 
 def enter():
-    global running, font, minute, second, back
+    global running, font, minute, second, back, pause_image
     running = True
     font = load_font('JejuHallasan.ttf', 32)
+    pause_image = load_image('pause.png')
     minute, second = 0, 0
     character.enter()
     back = background.InfiniteBackground()
@@ -51,6 +53,7 @@ def draw():
 
     font.draw(568, 850, f'{minute} : {second}', (0, 0, 0))
     font.draw(600, 550, f'{int(character.hero.rect.x)} : {int(character.hero.rect.y)}', (0, 0, 0))
+    pause_image.clip_draw(0, 0, 328, 328, 1160, 860, 80, 80)
     update_canvas()
 
 def update():

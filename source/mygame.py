@@ -1,8 +1,8 @@
 import pico2d
 import game_framework
 import lobby
-import dead
 import os
+
 
 os.chdir('Sprite_use')
 pico2d.open_canvas(1200, 900)

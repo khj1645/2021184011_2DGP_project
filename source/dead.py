@@ -4,7 +4,8 @@ import game_framework
 import game_world
 import character
 import lobby
-import attack
+import rank
+
 
 big_font = None
 mid_font = None

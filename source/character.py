@@ -5,6 +5,7 @@ import math
 import lobby
 import game_framework
 import game_world
+import stop
 
 
 def setMove(event):
@@ -180,10 +181,14 @@ def handle_events(event):
     elif event.type == SDL_MOUSEBUTTONUP and event.button == SDL_BUTTON_RIGHT:
             click = False
     elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
-            normal_bullet.append(attack.normal_bullet())
-            game_world.add_object(normal_bullet[len(normal_bullet) - 1],1)
-            setBullet(event, normal_bullet)
-            attack.normal_bullet.sound.play()
+            x, y = event.x, 900 - 1 - event.y
+            if(x >= 1120 and x <= 1200 and y >= 820 and y <= 900):
+                game_framework.push_state(stop)
+            else:
+                normal_bullet.append(attack.normal_bullet())
+                game_world.add_object(normal_bullet[len(normal_bullet) - 1],1)
+                setBullet(event, normal_bullet)
+                attack.normal_bullet.sound.play()
     elif event.key == SDLK_q:
             if(skill_q_coll_time <= 0):
                 skill_q_coll_time = 0.5
