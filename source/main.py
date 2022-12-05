@@ -52,7 +52,6 @@ def draw():
         game_object.draw()
 
     font.draw(568, 850, f'{minute} : {second}', (0, 0, 0))
-    font.draw(600, 550, f'{int(character.hero.rect.x)} : {int(character.hero.rect.y)}', (0, 0, 0))
     pause_image.clip_draw(0, 0, 328, 328, 1160, 860, 80, 80)
     update_canvas()
 
