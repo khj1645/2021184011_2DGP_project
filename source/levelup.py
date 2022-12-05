@@ -16,64 +16,51 @@ image_index = None
 big_font, mid_font, small_font = None, None, None
 def upgrade(n):
     if n == 0:
-        attack.normal_bullet_damage += attack.normal_bullet_damage / 20
+        attack.normal_bullet_damage += attack.normal_bullet_damage * (20 / 100)
         attack.normal_bullet_level += 1
-        print("평타 업글")
         pass
     if n == 1:
         if attack.skill_q_level % 2 != 0:
-            attack.skill_q_damage += attack.skill_q_damage / 20
+            attack.skill_q_damage += attack.skill_q_damage * (20 / 100)
         else:
-            character.skill_q_coll_time = character.skill_q_coll_time - character.skill_q_coll_time / 10
+            character.skill_q_coll_time = character.skill_q_coll_time - character.skill_q_coll_time * (10 / 100)
         attack.skill_q_level += 1
-        print("q 업글")
         pass
     if n == 2:
         if attack.skill_w_level % 2 != 0:
-            attack.skill_w_damage += attack.skill_w_damage / 20
-            attack.skill_w_level += 1
+            attack.skill_w_damage += attack.skill_w_damage * (20 / 100)
         else:
-            character.skill_w_coll_time = character.skill_w_coll_time - character.skill_w_coll_time / 10
-        print("w 업글")
+            character.skill_w_coll_time = character.skill_w_coll_time - character.skill_w_coll_time * (10 / 100)
+        attack.skill_w_level += 1
         # attack.skill_w_damage = attack.skill_w_damage + 50
         
         pass
     if n == 3:
-        attack.skill_e_damage += attack.skill_e_damage / 20
+        attack.skill_e_damage += attack.skill_e_damage * (20 / 100)
         attack.skill_e_level += 1
-        print("e 업글")
         pass
     if n == 4:
         if attack.skill_r_level % 2 != 0:
-            attack.skill_r_damage += attack.skill_r_damage / 20
-            attack.skill_r_level += 1
+            attack.skill_r_damage += attack.skill_r_damage * (20 / 100)
         else:
-            character.skill_r_cool_time = character.skill_r_cool_time - character.skill_r_cool_time / 10
-        print("r 업글")
+            character.skill_r_cool_time = character.skill_r_cool_time - character.skill_r_cool_time * (10 / 100)
+        attack.skill_r_level += 1
         pass
     if n == 5:
         character.int_level += 1
-        attack.skill_q_damage += attack.skill_q_damage / 5
-        attack.skill_w_damage += attack.skill_w_damage / 5
-        attack.skill_e_damage += attack.skill_e_damage / 5
-        attack.skill_r_damage += attack.skill_r_damage / 5
-        print("능지 업글")
+        attack.skill_q_damage += attack.skill_q_damage * (5 / 100)
+        attack.skill_w_damage += attack.skill_w_damage * (5 / 100)
+        attack.skill_e_damage += attack.skill_e_damage * (5 / 100)
+        attack.skill_r_damage += attack.skill_r_damage * (5 / 100)
         pass
     if n == 6:
         character.hp_level += 1
         character.hero.hp += 20
-        print("hp 업글")
         pass
     if n == 7:
         character.speed_level += 1
         character.speed += 1
-        print("가속 업글")
         pass
-    print(attack.normal_bullet_damage)
-    print(attack.skill_q_damage)
-    print(attack.skill_w_damage)
-    print(attack.skill_e_damage)
-    print(attack.skill_r_damage)
     enter()
 
 def handle_events():

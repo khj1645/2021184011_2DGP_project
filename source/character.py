@@ -6,7 +6,7 @@ import lobby
 import game_framework
 import game_world
 import stop
-
+import enemy
 
 def setMove(event):
     global mouse_x, mouse_y, isMove, hero,  height, weight, movesheep, now_image, speed
@@ -159,7 +159,7 @@ def enter():
     now_image = idle_image
 
     skill_q_coll_time = 0
-    skill_e = attack.skill_e()
+    skill_e = attack.Skill_E()
     game_world.add_object(skill_e,1)
     skill_w_coll_time = 0
     skill_r_cool_time = 0
@@ -185,37 +185,41 @@ def handle_events(event):
             if(x >= 1120 and x <= 1200 and y >= 820 and y <= 900):
                 game_framework.push_state(stop)
             else:
-                normal_bullet.append(attack.normal_bullet())
+                normal_bullet.append(attack.Normal_Bullet())
                 game_world.add_object(normal_bullet[len(normal_bullet) - 1],1)
                 setBullet(event, normal_bullet)
-                attack.normal_bullet.sound.play()
+                attack.Normal_Bullet.sound.play()
     elif event.key == SDLK_q:
             if(skill_q_coll_time <= 0):
                 skill_q_coll_time = 0.5
-                skill_q.append(attack.skill_q())
+                skill_q.append(attack.Skill_Q())
                 game_world.add_object(skill_q[len(skill_q) - 1],1)
                 x, y = ctypes.c_int(0), ctypes.c_int(0)
                 buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
                 event.x = x.value
                 event.y = y.value
                 setBullet(event,skill_q)
-                print(get_time())
-                attack.skill_q.sound.play()
+                attack.Skill_Q.sound.play()
     elif event.key == SDLK_w:
             if(skill_w_coll_time <= 0):
                 skill_w_coll_time = 0.5
-                skill_w.append(attack.skill_w())
+                skill_w.append(attack.Skill_W())
                 game_world.add_object(skill_w[len(skill_w) - 1],1)
                 x, y = ctypes.c_int(0), ctypes.c_int(0)
                 buttonstate = SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
                 event.x = x.value
                 skill_w[len(skill_w) - 1].rect[0].x = event.x + (hero.rect.x - 600)
                 skill_w[len(skill_w) - 1].sx = skill_w[len(skill_w) - 1].rect[0].x  - (hero.rect.x - 600)
-                attack.skill_w.sound.play()
+                skill_w[len(skill_w) - 1].rect[0].update()
+                for w in skill_w:
+                    for ene in enemy.enemys:
+                        if w.rect[0].collide_rect_to_circle(ene.circle):
+                            ene.hp -= attack.skill_w_damage
+                attack.Skill_W.sound.play()
 
     elif event.key == SDLK_r:
             if(skill_r_cool_time <= 0):
-                skill_r_temp = attack.skill_r()
+                skill_r_temp = attack.Skill_R()
                 
                 skill_r_cool_time = 2
                 x, y = ctypes.c_int(0), ctypes.c_int(0)

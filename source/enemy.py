@@ -7,10 +7,14 @@ import game_framework
 import game_world
 import levelup
 import main
+
 enemys = None
 maketime = None
 make_limit = None
 make_flag = None
+status_flag = None
+enemy_damage = None
+enemy_hp = None
 
 PIXEL_PER_METER = (10.0 / 0.2) # 10 pixel 30 cm
 RUN_SPEED_MPS_SLOW_ENEMY_X = 3.0
@@ -29,7 +33,7 @@ TIME_PER_ACTION_FAST_ENEMY = 0.5
 ACTION_PER_TIME_FAST_ENEMY = 1.0 /  TIME_PER_ACTION_SLOW_ENEMY
 FRAMES_PER_ACTION_FAST_ENEMY = 6
 
-class enemy:
+class Enemy:
     image = None
     radius = [40, 60, 60 ]
     image_x = [130, 110, 105 ]
@@ -56,10 +60,10 @@ class enemy:
         else:
             self.circle.y -= random.randint(1000,1500)
             
-        self.circle.r = enemy.radius[self.type]
-        self.hp = 50
+        self.circle.r = Enemy.radius[self.type]
+        self.hp = enemy_hp
         self.frame = 0
-        self.max_frame = enemy.frame[self.type]
+        self.max_frame = Enemy.frame[self.type]
         if self.type == 0:
             self.speed_x = RUN_SPEED_PPS_FAST_ENEMY_X * game_framework.frame_time
             self.speed_y = RUN_SPEED_PPS_FAST_ENEMY_Y * game_framework.frame_time
@@ -129,14 +133,17 @@ class enemy:
         if self.die:
             self.image.clip_draw(0, 0, 180, 180, sx, sy, self.circle.r * 2, self.circle.r * 2)
         else:  
-            self.image.clip_draw(0, 0, enemy.image_x[self.type], enemy.image_y[self.type], sx, sy, self.circle.r * 2, self.circle.r * 2)
+            self.image.clip_draw(0, 0, Enemy.image_x[self.type], Enemy.image_y[self.type], sx, sy, self.circle.r * 2, self.circle.r * 2)
 
 def enter():
-    global enemys, maketime, make_limit, make_flag
+    global enemys, maketime, make_limit, make_flag, enemy_damage, enemy_hp, status_flag
     enemys = []
     maketime = 0
     make_limit = 0.7
     make_flag = False
+    status_flag = False
+    enemy_damage = 40
+    enemy_hp = 50
 
         
 def draw():
@@ -144,21 +151,28 @@ def draw():
         enemy.draw()
 
 def make_enemy():
-    global maketime, make_limit, make_flag
+    global maketime, make_limit, make_flag, status_flag, enemy_hp, enemy_damage
     
     maketime -= game_framework.frame_time
     if(maketime <= 0):
         maketime = make_limit
-        enemys.append(enemy())
+        enemys.append(Enemy())
         game_world.add_object(enemys[len(enemys) - 1],1)
     if (main.second == 0 or main.second == 30):
         if make_flag == False:
             make_flag = True
             if(make_limit > 0.1):
-                print("생성시간 감소")
                 make_limit -= 0.1
     else:
         make_flag = False
+
+    if (main.second == 0 and main.minute >= 1):
+        if status_flag == False:
+            status_flag = True
+            enemy_hp += 10
+            enemy_damage += 10
+    else:
+        status_flag = False
 
 def check_enemy():
     global enemys
@@ -174,7 +188,7 @@ def check_enemy():
             enem.max_frame = 3
             enem.image_list = ['Unit16Motion_DeathA1.png', 'Unit16Motion_DeathB1.png', 'Unit16Motion_DeathC1.png']
             if random.randint(0,10) < 3:
-                item.items.append(item.item(enem.circle.x,enem.circle.y))
+                item.items.append(item.Item(enem.circle.x, enem.circle.y))
                 game_world.add_object(item.items[len(item.items) - 1],1)
 
         if enem.die and enem.frame >=3:

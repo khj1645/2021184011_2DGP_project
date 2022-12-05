@@ -5,11 +5,11 @@ import game_framework
 import rect
 import circle
 
-normal_bullet_damage = 5
-skill_q_damage = 50
+normal_bullet_damage = 15
+skill_q_damage = 40
 skill_w_damage = 30
-skill_e_damage = 1
-skill_r_damage = 200
+skill_e_damage = 30
+skill_r_damage = 100
 
 normal_bullet_level = 1
 skill_q_level = 1
@@ -29,7 +29,7 @@ TIME_PER_ACTION_R = 0.3
 ACTION_PER_TIME_R = 1.0 / TIME_PER_ACTION_R
 FRAMES_PER_ACTION_R = 4
 
-class normal_bullet:
+class Normal_Bullet:
     image = None
     sound = None
     def __init__(self):
@@ -43,12 +43,12 @@ class normal_bullet:
         self.unit_x = 0
         self.unit_y = 0
         self.rad = 0
-        if normal_bullet.image == None:
+        if Normal_Bullet.image == None:
             self.image = load_image('Bullet5_01.png')
 
-        if normal_bullet.sound is None:
-            normal_bullet.sound = load_wav('AudioClip\\Sound_BulletFire1.wav')
-            normal_bullet.sound.set_volume(10)
+        if Normal_Bullet.sound is None:
+            Normal_Bullet.sound = load_wav('AudioClip\\Sound_BulletFire1.wav')
+            Normal_Bullet.sound.set_volume(10)
 
     def update(self):
         self.circle.x += (self.unit_x * game_framework.frame_time) #- (character.hero.unit_x * game_framework.frame_time)
@@ -62,7 +62,7 @@ class normal_bullet:
         #self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, self.image_x, self.image_x)
 
   
-class skill_q:
+class Skill_Q:
     image = None
     sound = None
     def __init__(self):
@@ -77,11 +77,11 @@ class skill_q:
         self.rad = 0
         self.frame = 0
         self.image_list = ['Bullet6_01t.png','Bullet6_02t.png','Bullet6_03t.png']
-        if skill_q.image == None:
+        if Skill_Q.image == None:
             self.image = load_image(self.image_list[0])
-        if skill_q.sound is None:
-            skill_q.sound = load_wav('AudioClip\\Sound_BulletFire5.wav')
-            skill_q.sound.set_volume(10)
+        if Skill_Q.sound is None:
+            Skill_Q.sound = load_wav('AudioClip\\Sound_BulletFire5.wav')
+            Skill_Q.sound.set_volume(10)
     def update(self):
         self.circle.x += (self.unit_x * game_framework.frame_time) #- (character.hero.unit_x * game_framework.frame_time)
         self.circle.y += (self.unit_y * game_framework.frame_time) #- (character.hero.unit_y * game_framework.frame_time)
@@ -96,7 +96,7 @@ class skill_q:
         self.image.rotate_draw(self.rad,sx,sy,80,64)
         #self.image.clip_draw(0, 0, self.image_x, self.image_y, self.rect.x, self.rect.y, self.image_x, self.image_x)
 
-class skill_e:
+class Skill_E:
     image = None
     def __init__(self):
         self.image_x = 468
@@ -106,7 +106,7 @@ class skill_e:
         self.circle.y = character.hero.rect.y
         self.circle.r = 200
         self.frame = 0
-        if skill_e.image == None:
+        if Skill_E.image == None:
             self.image_list = ['ElectricZone1A.png','ElectricZone1B.png','ElectricZone1C.png']
             self.image = load_image(self.image_list[0])
     def update(self):
@@ -123,7 +123,7 @@ class skill_e:
         self.image.clip_draw(0, 0, self.image_x, self.image_y, sx, sy, self.circle.r * 2, self.circle.r * 2)
 
 
-class skill_w:
+class Skill_W:
     image = None
     sound = None
     def __init__(self):
@@ -136,11 +136,11 @@ class skill_w:
         self.rect[0].y = character.hero.rect.y
         self.sx = 0
         self.frame = 0
-        if skill_w.sound is None:
-            skill_w.sound = load_wav('AudioClip\\Sound_BulletFire2.wav')
-            skill_w.sound.set_volume(10)
+        if Skill_W.sound is None:
+            Skill_W.sound = load_wav('AudioClip\\Sound_BulletFire2.wav')
+            Skill_W.sound.set_volume(10)
 
-        if skill_w.image == None:
+        if Skill_W.image == None:
             self.image_list = ['ThunderA0.png','ThunderA1.png','ThunderA2.png']
             self.effect_list = ['Explosion7_01.png','Explosion7_02.png','Explosion7_03.png','Explosion7_04.png','Explosion7_05.png','Explosion7_06.png']
             self.image = load_image(self.image_list[0])
@@ -160,7 +160,7 @@ class skill_w:
         self.effect.clip_draw(0, 0, 181, 175, self.sx, sy - 425, 100, 100)
         # pico2d.draw_rectangle( self.rect[0].left- (character.hero.rect.x - 600),self.rect[0].top- (character.hero.rect.y - 450),self.rect[0].right- (character.hero.rect.x - 600), self.rect[0].bottom- (character.hero.rect.y - 450))
 
-class skill_r:
+class Skill_R:
     image = None
     explosion_image = None
     explosion_sound = None
@@ -176,15 +176,15 @@ class skill_r:
         self.circle.y = 0
         self.circle.r = 150
         self.frame = -1
-        if skill_r.image == None:
+        if Skill_R.image == None:
             self.image_list = ['MeteorC1.png','MeteorC2.png', 'MeteorC3.png']
             self.explosion_image_list = ['Explosion54_02.png','Explosion54_03.png',
                                          'Explosion54_04.png','Explosion54_05.png',
                                          ]
             self.image = load_image(self.image_list[0])
-        if skill_r.explosion_sound is None:
-            skill_r.explosion_sound = load_wav('AudioClip\\Sound_Explosion20.wav')
-            skill_r.explosion_sound.set_volume(10)
+        if Skill_R.explosion_sound is None:
+            Skill_R.explosion_sound = load_wav('AudioClip\\Sound_Explosion20.wav')
+            Skill_R.explosion_sound.set_volume(10)
     def update(self):
         if self.isexplo:
             if self.frame >= 3:

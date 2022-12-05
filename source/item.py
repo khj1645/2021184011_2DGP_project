@@ -6,10 +6,10 @@ import rect
 items = None
 
 
-class item:
+class Item:
     image = None
     def __init__(self, x, y):
-        if item.image == None:
+        if Item.image == None:
             self.image = load_image('item15.png')
         self.rect = rect.rect()
         self.rect.x = x

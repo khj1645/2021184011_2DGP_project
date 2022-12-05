@@ -1,6 +1,5 @@
-from this import d
+
 from pico2d import *
-import math
 class circle:
     def __init__(self):
         self.x = 0
